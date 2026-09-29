@@ -1,108 +1,139 @@
 import { Image } from 'expo-image';
-import { StyleSheet, View } from 'react-native';
-import Animated, { Keyframe, Easing } from 'react-native-reanimated';
+import * as SplashScreen from 'expo-splash-screen';
+import { useEffect, useRef, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
-import classes from './animated-icon.module.css';
-const DURATION = 300;
+const WELCOME_TEXT = 'Welcome to ';
+const CHAR_INTERVAL_MS = 60;
+const PRE_TYPING_DELAY_MS = 750;
+const POST_TYPING_PAUSE_MS = 1100;
+const FADE_OUT_MS = 480;
 
-export function AnimatedSplashOverlay() {
-  return null;
+export interface AnimatedSplashOverlayProps {
+  fontsLoaded?: boolean;
+  onComplete?: () => void;
 }
 
-const keyframe = new Keyframe({
-  0: {
-    transform: [{ scale: 0 }],
-  },
-  60: {
-    transform: [{ scale: 1.2 }],
-    easing: Easing.elastic(1.2),
-  },
-  100: {
-    transform: [{ scale: 1 }],
-    easing: Easing.elastic(1.2),
-  },
-});
+export function AnimatedSplashOverlay({
+  fontsLoaded = true,
+  onComplete,
+}: AnimatedSplashOverlayProps) {
+  const [visible, setVisible] = useState(true);
+  const [typedChars, setTypedChars] = useState(0);
 
-const logoKeyframe = new Keyframe({
-  0: {
-    opacity: 0,
-  },
-  60: {
-    transform: [{ scale: 1.2 }],
-    opacity: 0,
-    easing: Easing.elastic(1.2),
-  },
-  100: {
-    transform: [{ scale: 1 }],
-    opacity: 1,
-    easing: Easing.elastic(1.2),
-  },
-});
+  const overlayOpacity = useSharedValue(1);
+  const splashOpacity = useSharedValue(1);
+  const welcomeOpacity = useSharedValue(0);
 
-const glowKeyframe = new Keyframe({
-  0: {
-    transform: [{ rotateZ: '-180deg' }, { scale: 0.8 }],
-    opacity: 0,
-  },
-  [DURATION / 1000]: {
-    transform: [{ rotateZ: '0deg' }, { scale: 1 }],
-    opacity: 1,
-    easing: Easing.elastic(0.7),
-  },
-  100: {
-    transform: [{ rotateZ: '7200deg' }],
-  },
-});
+  const charCountRef = useRef(0);
+  const timerRefs = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const intervalRef = useRef<ReturnType<typeof setInterval>>(undefined);
 
-export function AnimatedIcon() {
+  useEffect(() => {
+    if (!fontsLoaded) return;
+    SplashScreen.hideAsync().catch(() => {});
+
+    const t1 = setTimeout(() => {
+      splashOpacity.value = withTiming(0, { duration: 280 });
+      welcomeOpacity.value = withTiming(1, { duration: 280 });
+
+      charCountRef.current = 0;
+      intervalRef.current = setInterval(() => {
+        charCountRef.current += 1;
+        const count = charCountRef.current;
+        setTypedChars(count);
+
+        if (count >= WELCOME_TEXT.length) {
+          clearInterval(intervalRef.current);
+          const t2 = setTimeout(() => {
+            overlayOpacity.value = withTiming(0, { duration: FADE_OUT_MS });
+            const t3 = setTimeout(() => {
+              setVisible(false);
+              onComplete?.();
+            }, FADE_OUT_MS + 50);
+            timerRefs.current.push(t3);
+          }, POST_TYPING_PAUSE_MS);
+          timerRefs.current.push(t2);
+        }
+      }, CHAR_INTERVAL_MS);
+    }, PRE_TYPING_DELAY_MS);
+
+    timerRefs.current.push(t1);
+
+    return () => {
+      timerRefs.current.forEach(clearTimeout);
+      timerRefs.current = [];
+      clearInterval(intervalRef.current);
+    };
+  }, [fontsLoaded]);
+
+  const overlayAnim = useAnimatedStyle(() => ({ opacity: overlayOpacity.value }));
+  const splashAnim = useAnimatedStyle(() => ({ opacity: splashOpacity.value }));
+  const welcomeAnim = useAnimatedStyle(() => ({ opacity: welcomeOpacity.value }));
+
+  if (!visible) return null;
+
   return (
-    <View style={styles.iconContainer}>
-      <Animated.View entering={glowKeyframe.duration(60 * 1000 * 4)} style={styles.glow}>
-        <Image style={styles.glow} source={require('@/assets/images/logo-glow.png')} />
+    <Animated.View style={[StyleSheet.absoluteFill, styles.overlay, overlayAnim]}>
+      {/* Layer 1: Splash — logo only, centered */}
+      <Animated.View style={[StyleSheet.absoluteFill, styles.centered, splashAnim]}>
+        <Image
+          style={styles.splashLogo}
+          source={require('@/assets/images/splash-icon.png')}
+          contentFit="contain"
+        />
       </Animated.View>
 
-      <Animated.View style={styles.background} entering={keyframe.duration(DURATION)}>
-        <div className={classes.expoLogoBackground} />
+      {/* Layer 2: Welcome 1 — "Welcome to [logo]" */}
+      <Animated.View style={[StyleSheet.absoluteFill, styles.centered, welcomeAnim]}>
+        <View style={styles.welcomeRow}>
+          <Text style={styles.welcomeText}>{WELCOME_TEXT.slice(0, typedChars)}</Text>
+          <Image
+            style={styles.welcomeLogo}
+            source={require('@/assets/images/splash-icon.png')}
+            contentFit="contain"
+          />
+        </View>
       </Animated.View>
-
-      <Animated.View style={styles.imageContainer} entering={logoKeyframe.duration(DURATION)}>
-        <Image style={styles.image} source={require('@/assets/images/expo-logo.png')} />
-      </Animated.View>
-    </View>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    width: '100%',
+  overlay: {
+    backgroundColor: '#FBF8F4',
     zIndex: 1000,
-    position: 'absolute',
-    top: 128 / 2 + 138,
   },
-  imageContainer: {
-    justifyContent: 'center',
+  centered: {
     alignItems: 'center',
-  },
-  glow: {
-    width: 201,
-    height: 201,
-    position: 'absolute',
-  },
-  iconContainer: {
     justifyContent: 'center',
+  },
+  splashLogo: {
+    width: 165,
+    height: 73,
+  },
+  welcomeRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    width: 128,
-    height: 128,
+    gap: 6,
   },
-  image: {
-    position: 'absolute',
-    width: 76,
-    height: 71,
+  welcomeText: {
+    fontFamily: 'Manrope_400Regular',
+    fontSize: 30,
+    color: '#142029',
+    includeFontPadding: false,
   },
-  background: {
-    width: 128,
-    height: 128,
-    position: 'absolute',
+  welcomeLogo: {
+    width: 148,
+    height: 66,
   },
 });
+
+export function AnimatedIcon() {
+  return null;
+}
