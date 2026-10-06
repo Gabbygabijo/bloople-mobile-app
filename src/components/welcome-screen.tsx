@@ -1,5 +1,7 @@
+import { colorPalette } from '@/constants/styles';
+import { s } from '@/utils/size';
 import { Image } from 'expo-image';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -7,6 +9,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import ActionButton from './buttons/ActionButton';
+import { ThemedText } from './themed-text';
 
 interface WelcomeScreenProps {
   onGetStarted: () => void;
@@ -56,12 +60,12 @@ export function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
 
         {/* ── Body copy ── */}
         <View style={styles.textBlock}>
-          <Text style={styles.headline}>
+          <ThemedText type='heading2' style={styles.headline}>
             Let's find your perfect fit and build your Fit-DNA.
-          </Text>
-          <Text style={styles.subtitle}>
+          </ThemedText>
+          <ThemedText style={styles.subtitle}>
             Tell us a little about you and we'll personalise your recommendations & fit advice.
-          </Text>
+          </ThemedText>
         </View>
 
         {/* ── Push CTA to bottom ── */}
@@ -69,13 +73,7 @@ export function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
 
         {/* ── CTA ── */}
         <View style={styles.ctaBlock}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handleGetStarted}
-            activeOpacity={0.82}
-          >
-            <Text style={styles.buttonLabel}>Get Started</Text>
-          </TouchableOpacity>
+          <ActionButton btnText='Get Started' />
           <Text style={styles.caption}>Takes about 2-3 minutes.</Text>
         </View>
 
@@ -86,9 +84,8 @@ export function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
 
 // ─── Styles ──────────────────────────────────────────────────────────────────
 const BACKGROUND = '#FBF8F4';
-const TEXT_DARK = '#142029';
-const TEXT_MUTED = '#706970';
-const BUTTON_BG = '#7B3565'; // deep plum/mauve — Bloople brand
+const TEXT_DARK = colorPalette.primaryText;
+const TEXT_MUTED = colorPalette.secondaryText;
 
 const styles = StyleSheet.create({
   container: {
@@ -113,11 +110,11 @@ const styles = StyleSheet.create({
   // Hero
   heroContainer: {
     alignItems: 'center',
-    marginTop: 10,
+    marginVertical: 10,
   },
   heroImage: {
     width: '100%',
-    height: 290,
+    height: s(290),
   },
 
   // Text
@@ -126,15 +123,9 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   headline: {
-    fontFamily: 'CormorantGaramond_700Bold',
-    fontSize: 30,
-    lineHeight: 38,
     color: TEXT_DARK,
   },
   subtitle: {
-    fontFamily: 'Manrope_400Regular',
-    fontSize: 16,
-    lineHeight: 22,
     color: TEXT_MUTED,
   },
 
@@ -148,14 +139,6 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     gap: 14,
     alignItems: 'center',
-  },
-  button: {
-    backgroundColor: BUTTON_BG,
-    borderRadius: 14,
-    height: 56,
-    alignSelf: 'stretch',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   buttonLabel: {
     fontFamily: 'Manrope_600SemiBold',
