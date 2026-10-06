@@ -14,6 +14,11 @@ export const s = (size: number) => {
   return isTablet ? moderateScale(size, tabletFactor) : scaled;
 };
 
+export const fs = (size: number) => {
+  const scaled = moderateScale(size);
+  return isTablet ? moderateScale(size, tabletFactor) : scaled;
+};
+
 export const vs = (size: number) => {
   const scaled = verticalScale(size);
   return isTablet ? moderateScale(size, tabletFactor) : scaled;

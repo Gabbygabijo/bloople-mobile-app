@@ -2,7 +2,6 @@ import { Platform, StyleSheet, Text, type TextProps } from 'react-native';
 
 import { Fonts, ThemeColor } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-import { s } from '@/utils/size';
 
 export type ThemedTextProps = TextProps & {
   type?: 'default' | 'title' | 'small' | 'smallBold' | 'subtitle' | 'link' | 'linkPrimary' | 'code' | 'heading1' | 'heading2' | 'heading3' | 'heading4' | 'bodyText2';
@@ -49,9 +48,8 @@ const styles = StyleSheet.create({
   },
   default: {
     fontFamily: 'Manrope_400Regular',
-    fontSize: s(16),
+    fontSize: 16,
     lineHeight: 24,
-    fontWeight: 400,
   },
   title: {
     fontSize: 48,
@@ -79,32 +77,27 @@ const styles = StyleSheet.create({
   },
   heading1: {
     fontFamily: 'CormorantGaramond_400Regular',
-    fontSize: s(36),
+    fontSize: 36,
     lineHeight: 44,
-    fontWeight: '400' as const,
   },
   heading2: {
     fontFamily: 'CormorantGaramond_700Bold',
-    fontSize: s(30),
-    lineHeight: s(44),
-    fontWeight: '700' as const,
+    fontSize: 30,
+    lineHeight: 44,
   },
   heading3: {
     fontFamily: 'CormorantGaramond_700Bold',
-    fontSize: s(24),
-    lineHeight: s(44),
-    fontWeight: '700' as const,
+    fontSize: 24,
+    lineHeight: 44,
   },
   heading4: {
     fontFamily: 'CormorantGaramond_400Regular',
-    fontSize: s(20),
-    lineHeight: s(28),
-    fontWeight: '400' as const,
+    fontSize: 20,
+    lineHeight: 28,
   },
   bodyText2: {
     fontFamily: 'Manrope_400Regular',
-    fontSize: s(18),
-    lineHeight: s(28),
-    fontWeight: '400' as const,
+    fontSize: 18,
+    lineHeight: 28,
   },
 });
