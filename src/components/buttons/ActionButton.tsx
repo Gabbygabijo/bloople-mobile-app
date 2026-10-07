@@ -7,7 +7,7 @@ import { ThemedView } from '../themed-view';
 
 const ActionButton = ({
   btnText = 'Start exploring',
-  btnAction,
+  onPress,
   bgColor,
   textColor,
   borderWidth,
@@ -20,7 +20,7 @@ const ActionButton = ({
   rightIcon
 }: {
   btnText?: string
-  btnAction?: any
+  onPress?: any
   bgColor?: string
   textColor?: string
   borderWidth?: any
@@ -92,7 +92,7 @@ const ActionButton = ({
     )
   }
   return (
-    <TouchableOpacity activeOpacity={opacity ? opacity : 0.4} style={styles.container} onPress={btnAction} disabled={disabled}>
+    <TouchableOpacity activeOpacity={opacity ? opacity : 0.4} style={styles.container} onPress={onPress} disabled={disabled}>
       {
         icon ?
           <ThemedView style={styles.btnIcon}>

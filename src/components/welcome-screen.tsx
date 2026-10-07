@@ -1,6 +1,7 @@
 import { colorPalette, Containers } from '@/constants/styles';
 import { vs } from '@/utils/size';
 import { Image } from 'expo-image';
+import { router } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, {
   Easing,
@@ -73,7 +74,10 @@ export function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
 
         {/* ── CTA ── */}
         <View style={styles.ctaBlock}>
-          <ActionButton btnText='Get Started' />
+          <ActionButton
+            btnText='Get Started'
+            onPress={() => handleGetStarted()}
+          />
           <Text style={styles.caption}>Takes about 2-3 minutes.</Text>
         </View>
 
