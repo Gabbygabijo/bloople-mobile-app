@@ -1,20 +1,22 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import ActionButton from '@/components/buttons/ActionButton';
 import { ThemedText } from '@/components/themed-text';
-import { OnboardingHeader } from '@/components/ui/onboarding-header';
 import { SelectField } from '@/components/ui/select-field';
-import { colorPalette, Containers } from '@/constants/styles';
+import { colorPalette } from '@/constants/styles';
 import { vs } from '@/utils/size';
 
 const REGIONS = ['UK', 'US', 'EU'];
 const BAND_SIZES = ['28', '30', '32', '34', '36', '38', '40', '42', '44'];
 const CUP_SIZES = ['A', 'B', 'C', 'D', 'DD/E', 'F', 'FF', 'G', 'GG', 'H'];
 
-export default function YourFit2Screen() {
+interface YourFitStep2Props {
+  onContinue: (data: any) => void;
+}
+
+export function YourFitStep2({ onContinue }: YourFitStep2Props) {
   const router = useRouter();
   
   const [region, setRegion] = useState('UK');
@@ -23,14 +25,13 @@ export default function YourFit2Screen() {
   const [fitPreference, setFitPreference] = useState('');
 
   const handleContinue = () => {
-    // Next step not provided, so route to home or wherever
+    // We are at the final step, call onContinue to finish onboarding
+    onContinue({ region, band, cup, fitPreference });
     router.replace('/');
   };
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
-      <OnboardingHeader currentStep={2} totalSteps={3} stepTitle="Your fit (2/3)" />
-      
+    <>
       <ScrollView 
         style={styles.scrollView} 
         contentContainerStyle={styles.scrollContent}
@@ -125,16 +126,11 @@ export default function YourFit2Screen() {
           onPress={handleContinue}
         />
       </View>
-    </SafeAreaView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#FBF8F4',
-    ...Containers.defaultContainer,
-  },
   scrollView: {
     flex: 1,
   },

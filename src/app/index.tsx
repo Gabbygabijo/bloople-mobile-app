@@ -5,7 +5,7 @@ export default function Index() {
   return (
     <WelcomeScreen 
       onGetStarted={() => {
-        router.push('/onboarding/about-you');
+        router.push('/onboarding');
       }} 
     />
   );

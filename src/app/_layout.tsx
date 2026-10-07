@@ -48,7 +48,7 @@ export default function RootLayout() {
 
       {/* ── Welcome 2 overlay (z-index 500) ── */}
         <WelcomeScreen onGetStarted={() => {
-          router.push('/onboarding/about-you');
+          router.push('/onboarding');
         }} />
 
       {/* ── Splash + Welcome 1 overlay (z-index 1000, highest) ── */}

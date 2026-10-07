@@ -8,14 +8,23 @@ interface OnboardingHeaderProps {
   currentStep: number;
   totalSteps: number;
   stepTitle: string; // e.g., "About You"
+  onBack?: () => void;
 }
 
-export function OnboardingHeader({ currentStep, totalSteps, stepTitle }: OnboardingHeaderProps) {
+export function OnboardingHeader({ currentStep, totalSteps, stepTitle, onBack }: OnboardingHeaderProps) {
   const router = useRouter();
   
+  const handleBack = () => {
+    if (onBack) {
+      onBack();
+    } else {
+      router.back();
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+      <TouchableOpacity onPress={handleBack} style={styles.backButton}>
         <Ionicons name="chevron-back" size={20} color={colorPalette.primaryText} />
       </TouchableOpacity>
       
@@ -69,6 +78,6 @@ const styles = StyleSheet.create({
     backgroundColor: colorPalette.primary,
   },
   progressInactive: {
-    backgroundColor: '#E5E5E5',
+    backgroundColor: '#D2D2D2',
   },
 });
