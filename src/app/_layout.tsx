@@ -8,13 +8,12 @@ import {
   Manrope_700Bold,
 } from '@expo-google-fonts/manrope';
 import { useFonts } from 'expo-font';
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider, router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useState } from 'react';
 import { useColorScheme } from 'react-native';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
+// AppTabs moved to (tabs)/_layout.tsx
 import { WelcomeScreen } from '@/components/welcome-screen';
 
 // Keep the native splash visible until our custom overlay takes over
@@ -33,7 +32,6 @@ SplashScreen.preventAutoHideAsync();
  */
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const [onboarded, setOnboarded] = useState(false);
 
   const [fontsLoaded] = useFonts({
     Manrope_400Regular,
@@ -45,13 +43,13 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      {/* ── Main app (always mounted, revealed once onboarding is done) ── */}
-      <AppTabs />
+      {/* ── Main app Stack (handles file-based routing) ── */}
+      <Stack screenOptions={{ headerShown: false }} />
 
       {/* ── Welcome 2 overlay (z-index 500) ── */}
-      {!onboarded && (
-        <WelcomeScreen onGetStarted={() => setOnboarded(true)} />
-      )}
+        <WelcomeScreen onGetStarted={() => {
+          router.push('/onboarding');
+        }} />
 
       {/* ── Splash + Welcome 1 overlay (z-index 1000, highest) ── */}
       <AnimatedSplashOverlay fontsLoaded={fontsLoaded ?? false} />

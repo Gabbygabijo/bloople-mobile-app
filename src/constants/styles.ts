@@ -1,3 +1,5 @@
+import { StyleSheet } from "react-native";
+
 export const colorPalette = {
   primary: '#6D3B5E',
   secondary: '#A85F7D',
@@ -10,3 +12,11 @@ export const colorPalette = {
   warning: '#B8793E',
   error: '#B94A58',
 };
+
+
+export const Containers = StyleSheet.create({
+  defaultContainer: {
+    width: '92%',
+    marginHorizontal: 'auto',
+  },
+})

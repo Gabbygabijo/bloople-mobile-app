@@ -1,6 +1,7 @@
-import { colorPalette } from '@/constants/styles';
-import { s } from '@/utils/size';
+import { colorPalette, Containers } from '@/constants/styles';
+import { vs } from '@/utils/size';
 import { Image } from 'expo-image';
+import { router } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, {
   Easing,
@@ -73,7 +74,10 @@ export function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
 
         {/* ── CTA ── */}
         <View style={styles.ctaBlock}>
-          <ActionButton btnText='Get Started' />
+          <ActionButton
+            btnText='Get Started'
+            onPress={() => handleGetStarted()}
+          />
           <Text style={styles.caption}>Takes about 2-3 minutes.</Text>
         </View>
 
@@ -94,7 +98,8 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
-    paddingHorizontal: 28,
+    // paddingHorizontal: 28,
+    ...Containers.defaultContainer
   },
 
   // Logo
@@ -114,13 +119,12 @@ const styles = StyleSheet.create({
   },
   heroImage: {
     width: '100%',
-    height: s(290),
+    height: vs(290),
   },
 
   // Text
   textBlock: {
-    marginTop: 22,
-    gap: 10,
+    gap: vs(10),
   },
   headline: {
     color: TEXT_DARK,
