@@ -1,33 +1,120 @@
-import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import ActionButton from '@/components/buttons/ActionButton';
 import { ThemedText } from '@/components/themed-text';
-import { SelectField } from '@/components/ui/select-field';
+import { SelectField, SelectOption } from '@/components/ui/select-field';
 import { colorPalette } from '@/constants/styles';
 import { vs } from '@/utils/size';
 
-const REGIONS = ['UK', 'US', 'EU'];
-const BAND_SIZES = ['28', '30', '32', '34', '36', '38', '40', '42', '44'];
-const CUP_SIZES = ['A', 'B', 'C', 'D', 'DD/E', 'F', 'FF', 'G', 'GG', 'H'];
+type RegionType = 'UK' | 'US' | 'EU';
+
+const REGIONS: RegionType[] = ['UK', 'US', 'EU'];
+
+const REGION_DATA: Record<RegionType, { bands: string[]; cups: string[] }> = {
+  US: {
+    bands: ['28', '30', '32', '34', '36', '38', '40', '42', '44'],
+    cups: ['AA', 'A', 'B', 'C', 'DD', 'DDD', 'DDD/F', 'G', 'H', 'I'],
+  },
+  UK: {
+    bands: ['28', '30', '32', '34', '36', '38', '40', '42', '44'],
+    cups: ['A', 'B', 'C', 'D', 'DD/E', 'F', 'FF', 'G', 'GG', 'H'],
+  },
+  EU: {
+    bands: ['60', '65', '70', '75', '80', '85', '90'],
+    cups: ['AA', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'],
+  },
+};
+
+const FIT_OPTIONS: SelectOption[] = [
+  { label: 'Usually fits', value: 'Usually fits' },
+  { label: 'Sometimes fits', value: 'Sometimes fits' },
+  { label: 'Rarely fits', value: 'Rarely fits' },
+];
 
 interface YourFitStep2Props {
   onContinue: (data: any) => void;
 }
 
 export function YourFitStep2({ onContinue }: YourFitStep2Props) {
-  const router = useRouter();
-  
-  const [region, setRegion] = useState('UK');
+  const [region, setRegion] = useState<RegionType>('UK');
   const [band, setBand] = useState<string | null>(null);
   const [cup, setCup] = useState<string | null>(null);
   const [fitPreference, setFitPreference] = useState('');
 
+  const handleRegionChange = (newRegion: RegionType) => {
+    setRegion(newRegion);
+    // Reset band or cup if not available in selected region
+    if (band && !REGION_DATA[newRegion].bands.includes(band)) {
+      setBand(null);
+    }
+    if (cup && !REGION_DATA[newRegion].cups.includes(cup)) {
+      setCup(null);
+    }
+  };
+
   const handleContinue = () => {
-    // We are at the final step, call onContinue to finish onboarding
     onContinue({ region, band, cup, fitPreference });
-    router.replace('/');
+  };
+
+  const getSelectedDisplay = () => {
+    if (!band && !cup) {
+      return '- - / - -';
+    }
+    const sizePart = [band, cup].filter(Boolean).join('');
+    return `${region} ${sizePart}`;
+  };
+
+  const currentBands = REGION_DATA[region].bands;
+  const currentCups = REGION_DATA[region].cups;
+
+  const renderGrid = (
+    items: string[],
+    selectedValue: string | null,
+    onSelect: (val: string) => void
+  ) => {
+    const rows: string[][] = [];
+    for (let i = 0; i < items.length; i += 5) {
+      rows.push(items.slice(i, i + 5));
+    }
+
+    return (
+      <View style={styles.gridContainer}>
+        {rows.map((row, rowIndex) => (
+          <View key={rowIndex} style={styles.gridRow}>
+            {Array.from({ length: 5 }).map((_, colIndex) => {
+              const item = row[colIndex];
+              if (!item) {
+                return (
+                  <View
+                    key={`empty-${colIndex}`}
+                    style={[styles.gridItem, styles.gridItemHidden]}
+                  />
+                );
+              }
+              const isSelected = selectedValue === item;
+              return (
+                <TouchableOpacity
+                  key={item}
+                  style={[styles.gridItem, isSelected && styles.gridItemActive]}
+                  onPress={() => onSelect(item)}
+                  activeOpacity={0.7}
+                >
+                  <Text
+                    style={[
+                      styles.gridItemText,
+                      isSelected && styles.gridItemTextActive,
+                    ]}
+                  >
+                    {item}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        ))}
+      </View>
+    );
   };
 
   return (
@@ -41,9 +128,15 @@ export function YourFitStep2({ onContinue }: YourFitStep2Props) {
           What size do you usually get?
         </ThemedText>
 
-        {/* Region Toggle */}
-        <View style={styles.regionToggleContainer}>
-          <Text style={styles.regionLabel}>Selected region</Text>
+        {/* Selected size pill & Region Toggle */}
+        <View style={styles.topBarContainer}>
+          <View style={styles.selectedBadge}>
+            <Text style={styles.selectedLabel}>
+              Selected:{'  '}
+              <Text style={styles.selectedValue}>{getSelectedDisplay()}</Text>
+            </Text>
+          </View>
+
           <View style={styles.regionToggleGroup}>
             {REGIONS.map((r) => {
               const isSelected = region === r;
@@ -51,7 +144,8 @@ export function YourFitStep2({ onContinue }: YourFitStep2Props) {
                 <TouchableOpacity
                   key={r}
                   style={[styles.regionBtn, isSelected && styles.regionBtnActive]}
-                  onPress={() => setRegion(r)}
+                  onPress={() => handleRegionChange(r)}
+                  activeOpacity={0.8}
                 >
                   <Text style={[styles.regionBtnText, isSelected && styles.regionBtnTextActive]}>
                     {r}
@@ -65,55 +159,27 @@ export function YourFitStep2({ onContinue }: YourFitStep2Props) {
         {/* Band Sizes */}
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Band</Text>
-          <View style={styles.gridContainer}>
-            {BAND_SIZES.map((size) => {
-              const isSelected = band === size;
-              return (
-                <TouchableOpacity
-                  key={size}
-                  style={[styles.gridItem, isSelected && styles.gridItemActive]}
-                  onPress={() => setBand(size)}
-                >
-                  <Text style={[styles.gridItemText, isSelected && styles.gridItemTextActive]}>
-                    {size}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
+          {renderGrid(currentBands, band, (selected) => {
+            setBand((prev) => (prev === selected ? null : selected));
+          })}
         </View>
 
         {/* Cup Sizes */}
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Cup</Text>
-          <View style={styles.gridContainer}>
-            {CUP_SIZES.map((size) => {
-              const isSelected = cup === size;
-              return (
-                <TouchableOpacity
-                  key={size}
-                  style={[styles.gridItem, isSelected && styles.gridItemActive]}
-                  onPress={() => setCup(size)}
-                >
-                  <Text style={[styles.gridItemText, isSelected && styles.gridItemTextActive]}>
-                    {size}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
+          {renderGrid(currentCups, cup, (selected) => {
+            setCup((prev) => (prev === selected ? null : selected));
+          })}
         </View>
 
         {/* Fit Dropdown */}
-        <View style={[styles.sectionContainer, { marginTop: vs(16) }]}>
+        <View style={[styles.sectionContainer, { marginTop: vs(12) }]}>
           <SelectField
             label="How well does that size usually fit you?"
             placeholder="Usually fits"
             value={fitPreference}
-            onPress={() => {
-              // Just a toggle for demo
-              setFitPreference(prev => prev === 'Usually fits well' ? 'Too small' : 'Usually fits well');
-            }}
+            options={FIT_OPTIONS}
+            onSelect={(val) => setFitPreference(val)}
           />
         </View>
         
@@ -123,7 +189,7 @@ export function YourFitStep2({ onContinue }: YourFitStep2Props) {
       <View style={styles.footer}>
         <ActionButton 
           btnText="Continue" 
-          onPress={handleContinue}
+          onPress={handleContinue} 
         />
       </View>
     </>
@@ -141,79 +207,102 @@ const styles = StyleSheet.create({
     color: colorPalette.primaryText,
     marginBottom: vs(24),
   },
-  regionToggleContainer: {
+  topBarContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: vs(32),
+    marginBottom: vs(24),
   },
-  regionLabel: {
+  selectedBadge: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    justifyContent: 'center',
+  },
+  selectedLabel: {
     fontFamily: 'Manrope_400Regular',
     fontSize: 12,
     color: colorPalette.secondaryText,
   },
+  selectedValue: {
+    fontFamily: 'Manrope_600SemiBold',
+    color: colorPalette.primaryText,
+  },
   regionToggleGroup: {
     flexDirection: 'row',
-    backgroundColor: '#E1E1E1',
+    backgroundColor: '#EBEBEB',
     borderRadius: 8,
-    padding: 4,
+    padding: 3,
   },
   regionBtn: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 14,
     paddingVertical: 6,
-    borderRadius: 8,
+    borderRadius: 6,
   },
   regionBtnActive: {
     backgroundColor: colorPalette.primary,
   },
   regionBtnText: {
-    fontFamily: 'Manrope_600SemiBold',
+    fontFamily: 'Manrope_500Medium',
     fontSize: 12,
     color: colorPalette.secondaryText,
   },
   regionBtnTextActive: {
+    fontFamily: 'Manrope_600SemiBold',
     color: '#FFFFFF',
   },
   sectionContainer: {
-    marginBottom: vs(24),
+    marginBottom: vs(20),
   },
   sectionTitle: {
     fontFamily: 'Manrope_400Regular',
-    fontSize: 12,
-    color: colorPalette.secondaryText,
-    marginBottom: vs(12),
+    fontSize: 14,
+    color: colorPalette.primaryText,
+    marginBottom: vs(10),
   },
   gridContainer: {
+    gap: 8,
+  },
+  gridRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     gap: 8,
   },
   gridItem: {
-    width: '22%', // Roughly 4 items per row
-    aspectRatio: 1,
+    flex: 1,
+    height: 48,
     borderWidth: 1,
     borderColor: '#E5E5E5',
-    borderRadius: 8,
+    borderRadius: 10,
     backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
   },
+  gridItemHidden: {
+    opacity: 0,
+    borderWidth: 0,
+    backgroundColor: 'transparent',
+  },
   gridItemActive: {
     borderColor: colorPalette.primary,
-    backgroundColor: '#FDF7F8',
+    backgroundColor: '#F7EFF3',
   },
   gridItemText: {
-    fontFamily: 'Manrope_600SemiBold',
-    fontSize: 14,
+    fontFamily: 'Manrope_500Medium',
+    fontSize: 13,
     color: colorPalette.primaryText,
   },
   gridItemTextActive: {
-    color: colorPalette.primary,
+    fontFamily: 'Manrope_600SemiBold',
+    color: colorPalette.primaryText,
   },
   spacer: {
-    height: vs(40),
+    height: vs(32),
   },
   footer: {
     paddingVertical: vs(12),
   },
 });
+

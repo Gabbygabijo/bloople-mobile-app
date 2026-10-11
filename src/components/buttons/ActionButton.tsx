@@ -1,5 +1,5 @@
 import { colorPalette } from '@/constants/styles';
-import { vs } from '@/utils/size';
+import { s, vs } from '@/utils/size';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
 import { ThemedText } from '../themed-text';
@@ -44,7 +44,7 @@ const ActionButton = ({
     },
     btn: {
       backgroundColor: disabled ? colorPalette.secondary : (bgColor || colorPalette.primary),
-      paddingVertical: 17,
+      paddingVertical: s(17),
       // paddingHorizontal: s(16),
       width: btnWidth,
       borderRadius: 8,
@@ -55,8 +55,8 @@ const ActionButton = ({
     },
     btnIcon: {
       backgroundColor: disabled ? colorPalette.secondary : (bgColor || colorPalette.primary),
-      paddingVertical: 17,
-      paddingHorizontal: 16,
+      paddingVertical: s(17),
+      paddingHorizontal: s(16),
       width: btnWidth,
       borderRadius: 8,
       textAlign: 'center',
@@ -74,7 +74,7 @@ const ActionButton = ({
     },
     loadingBtn: {
       backgroundColor: colorPalette.secondary,
-      paddingVertical: 12,
+      paddingVertical: s(12),
       // paddingHorizontal: s(16),
       width: btnWidth,
       borderRadius: 8,
