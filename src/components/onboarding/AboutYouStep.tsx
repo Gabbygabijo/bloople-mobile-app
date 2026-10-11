@@ -1,13 +1,21 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
-import { Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import ActionButton from '@/components/buttons/ActionButton';
 import { ThemedText } from '@/components/themed-text';
 import { InputField } from '@/components/ui/input-field';
-import { SelectField } from '@/components/ui/select-field';
+import { SelectField, SelectOption } from '@/components/ui/select-field';
 import { colorPalette } from '@/constants/styles';
 import { vs } from '@/utils/size';
+
+const AGE_RANGE_OPTIONS: SelectOption[] = [
+  { label: '18 - 24', value: '18 - 24' },
+  { label: '25 - 34', value: '25 - 34' },
+  { label: '35 - 44', value: '35 - 44' },
+  { label: '45 - 54', value: '45 - 54' },
+  { label: '55+', value: '55+' },
+];
 
 interface AboutYouStepProps {
   onContinue: (data: any) => void;
@@ -23,14 +31,9 @@ export function AboutYouStep({ onContinue }: AboutYouStepProps) {
   const [height, setHeight] = useState('');
   const [heightUnit, setHeightUnit] = useState<'cm' | 'ft/in'>('cm');
 
-  // Modal states
-  const [isAgeModalVisible, setAgeModalVisible] = useState(false);
-  
   const handleContinue = () => {
     onContinue({ firstName, ageRange, email, country, phone, height, heightUnit });
   };
-
-  const ageRanges = ['18 - 24', '25 - 34', '35 - 44', '45 - 54', '55+'];
 
   return (
     <>
@@ -54,7 +57,8 @@ export function AboutYouStep({ onContinue }: AboutYouStepProps) {
           label="Age Range"
           placeholder="Select range"
           value={ageRange}
-          onPress={() => setAgeModalVisible(true)}
+          options={AGE_RANGE_OPTIONS}
+          onSelect={(val) => setAgeRange(val)}
         />
 
         <InputField
@@ -121,40 +125,6 @@ export function AboutYouStep({ onContinue }: AboutYouStepProps) {
           onPress={handleContinue} 
         />
       </View>
-
-      {/* Simple Age Range Modal */}
-      <Modal visible={isAgeModalVisible} transparent animationType="fade">
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Select Age Range</Text>
-              <TouchableOpacity onPress={() => setAgeModalVisible(false)}>
-                <Ionicons name="close" size={24} color={colorPalette.primaryText} />
-              </TouchableOpacity>
-            </View>
-            {ageRanges.map(range => (
-              <TouchableOpacity 
-                key={range} 
-                style={styles.modalOption}
-                onPress={() => {
-                  setAgeRange(range);
-                  setAgeModalVisible(false);
-                }}
-              >
-                <Text style={[
-                  styles.modalOptionText,
-                  ageRange === range && styles.modalOptionTextActive
-                ]}>
-                  {range}
-                </Text>
-                {ageRange === range && (
-                  <Ionicons name="checkmark" size={20} color={colorPalette.primary} />
-                )}
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-      </Modal>
     </>
   );
 }
@@ -212,45 +182,4 @@ const styles = StyleSheet.create({
   footer: {
     paddingVertical: vs(12),
   },
-  // Modal Styles
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    padding: 20,
-    paddingBottom: 40,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  modalTitle: {
-    fontFamily: 'Manrope_600SemiBold',
-    fontSize: 16,
-    color: colorPalette.primaryText,
-  },
-  modalOption: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F5F5F5',
-  },
-  modalOptionText: {
-    fontFamily: 'Manrope_400Regular',
-    fontSize: 14,
-    color: colorPalette.primaryText,
-  },
-  modalOptionTextActive: {
-    fontFamily: 'Manrope_600SemiBold',
-    color: colorPalette.primary,
-  }
 });

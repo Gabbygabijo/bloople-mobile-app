@@ -1,7 +1,6 @@
 import { colorPalette, Containers } from '@/constants/styles';
 import { vs } from '@/utils/size';
 import { Image } from 'expo-image';
-import { router } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, {
