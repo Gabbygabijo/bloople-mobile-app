@@ -4,7 +4,7 @@ import { Fonts, ThemeColor } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 export type ThemedTextProps = TextProps & {
-  type?: 'default' | 'title' | 'small' | 'smallBold' | 'subtitle' | 'link' | 'linkPrimary' | 'code' | 'heading1' | 'heading2' | 'heading3' | 'heading4' | 'bodyText2';
+  type?: 'default' | 'title' | 'small' | 'smallBold' | 'subtitle' | 'link' | 'linkPrimary' | 'code' | 'heading1' | 'heading2' | 'heading3' | 'heading4' | 'bodyText2' | 'bodyText1' | 'suportingBodyText4' | 'caption';
   themeColor?: ThemeColor;
 };
 
@@ -28,6 +28,9 @@ export function ThemedText({ style, type = 'default', themeColor, ...rest }: The
         type === 'heading3' && styles.heading3,
         type === 'heading4' && styles.heading4,
         type === 'bodyText2' && styles.bodyText2,
+        type === 'bodyText1' && styles.bodyText1,
+        type === 'suportingBodyText4' && styles.suportingBodyText4,
+        type === 'caption' && styles.caption,
         style,
       ]}
       {...rest}
@@ -100,4 +103,19 @@ const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 28,
   },
+  bodyText1: {
+    fontFamily: 'Manrope_400Regular',
+    fontSize: 16,
+    lineHeight: 24,
+  },
+  suportingBodyText4: {
+    fontFamily: 'Manrope_400Regular',
+    fontSize: 14,
+    lineHeight: 24,
+  },
+  caption: {
+    fontFamily: 'Manrope_400Regular',
+    fontSize: 12,
+    lineHeight: 16,
+  }
 });

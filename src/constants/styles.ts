@@ -19,4 +19,13 @@ export const Containers = StyleSheet.create({
     width: '92%',
     marginHorizontal: 'auto',
   },
+  backIconShadow: {
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.07,
+    shadowRadius: 10.5,
+
+    // Android shadow (elevation approximates it)
+    elevation: 3,
+  },
 })

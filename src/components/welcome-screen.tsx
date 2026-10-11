@@ -1,7 +1,7 @@
 import { colorPalette, Containers } from '@/constants/styles';
 import { vs } from '@/utils/size';
 import { Image } from 'expo-image';
-import { router } from 'expo-router';
+import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, {
   Easing,
@@ -24,13 +24,17 @@ interface WelcomeScreenProps {
  */
 export function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
   const opacity = useSharedValue(1);
+  const [isDismissed, setIsDismissed] = useState(false);
 
   const handleGetStarted = () => {
     opacity.value = withTiming(0, {
       duration: 320,
       easing: Easing.out(Easing.quad),
     });
-    setTimeout(onGetStarted, 360);
+    setTimeout(() => {
+      setIsDismissed(true);
+      onGetStarted();
+    }, 360);
   };
 
   const containerAnim = useAnimatedStyle(() => ({
@@ -38,7 +42,10 @@ export function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
   }));
 
   return (
-    <Animated.View style={[StyleSheet.absoluteFill, styles.container, containerAnim]}>
+    <Animated.View 
+      style={[StyleSheet.absoluteFill, styles.container, containerAnim]}
+      pointerEvents={isDismissed ? 'none' : 'auto'}
+    >
       <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
 
         {/* ── Logo ── */}

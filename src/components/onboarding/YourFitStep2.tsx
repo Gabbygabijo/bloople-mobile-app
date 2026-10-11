@@ -154,14 +154,14 @@ const styles = StyleSheet.create({
   },
   regionToggleGroup: {
     flexDirection: 'row',
-    backgroundColor: '#F5F5F5',
-    borderRadius: 20,
+    backgroundColor: '#E1E1E1',
+    borderRadius: 8,
     padding: 4,
   },
   regionBtn: {
     paddingHorizontal: 16,
     paddingVertical: 6,
-    borderRadius: 16,
+    borderRadius: 8,
   },
   regionBtnActive: {
     backgroundColor: colorPalette.primary,

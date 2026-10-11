@@ -1,8 +1,9 @@
-import { colorPalette } from '@/constants/styles';
+import { colorPalette, Containers } from '@/constants/styles';
 import { vs } from '@/utils/size';
 import { Ionicons } from '@expo/vector-icons';
+import { GlassView } from 'expo-glass-effect';
 import { useRouter } from 'expo-router';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface OnboardingHeaderProps {
   currentStep: number;
@@ -24,8 +25,16 @@ export function OnboardingHeader({ currentStep, totalSteps, stepTitle, onBack }:
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-        <Ionicons name="chevron-back" size={20} color={colorPalette.primaryText} />
+      <TouchableOpacity onPress={handleBack} style={styles.backButtonWrapper}>
+        {Platform.OS === 'ios' && parseInt(String(Platform.Version), 10) >= 26 ? (
+          <GlassView glassEffectStyle="clear" style={styles.backButtonInner}>
+            <Ionicons name="chevron-back" size={20} color={colorPalette.primaryText} />
+          </GlassView>
+        ) : (
+          <View style={[styles.backButtonInner, { backgroundColor: '#FFFFFF' }]}>
+            <Ionicons name="chevron-back" size={20} color={colorPalette.primaryText} />
+          </View>
+        )}
       </TouchableOpacity>
       
       <Text style={styles.stepTitle}>{stepTitle}</Text>
@@ -50,14 +59,20 @@ const styles = StyleSheet.create({
     paddingTop: vs(20),
     paddingBottom: vs(24),
   },
-  backButton: {
+  backButtonWrapper: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F5F5F5',
+    marginBottom: vs(16),
+    ...Containers.backIconShadow
+  },
+  backButtonInner: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: vs(16),
+    overflow: 'hidden',
   },
   stepTitle: {
     fontFamily: 'Manrope_600SemiBold',
