@@ -1,8 +1,8 @@
-import React from 'react';
-import { StyleSheet, TextInput, TextInputProps, View, Text } from 'react-native';
 import { colorPalette } from '@/constants/styles';
-import { ThemedText } from '../themed-text';
 import { vs } from '@/utils/size';
+import React from 'react';
+import { StyleSheet, Text, TextInput, TextInputProps, View } from 'react-native';
+import { ThemedText } from '../themed-text';
 
 interface InputFieldProps extends TextInputProps {
   label: string;
@@ -15,7 +15,7 @@ interface InputFieldProps extends TextInputProps {
 export function InputField({ label, error, leftElement, rightElement, style, containerStyle, ...rest }: InputFieldProps) {
   return (
     <View style={[styles.container, containerStyle]}>
-      <ThemedText style={styles.label}>{label}</ThemedText>
+      <ThemedText type='suportingBodyText4' style={styles.label}>{label}</ThemedText>
       <View style={[styles.inputContainer, error && styles.inputError]}>
         {leftElement}
         <TextInput
@@ -35,8 +35,6 @@ const styles = StyleSheet.create({
     marginBottom: vs(16),
   },
   label: {
-    fontFamily: 'Manrope_400Regular',
-    fontSize: 12,
     color: colorPalette.primaryText,
     marginBottom: 8,
   },
