@@ -7,7 +7,7 @@ import { ThemedText } from '@/components/themed-text';
 import { InputField } from '@/components/ui/input-field';
 import { SelectField, SelectOption } from '@/components/ui/select-field';
 import { colorPalette } from '@/constants/styles';
-import { vs } from '@/utils/size';
+import { s, vs } from '@/utils/size';
 
 const AGE_RANGE_OPTIONS: SelectOption[] = [
   { label: '18 - 24', value: '18 - 24' },
@@ -143,17 +143,17 @@ const styles = StyleSheet.create({
   phonePrefix: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 8,
+    marginRight: s(8),
     borderRightWidth: 1,
     borderRightColor: '#E5E5E5',
-    paddingRight: 8,
+    paddingRight: s(8),
   },
   unitToggle: {
     flexDirection: 'row',
     backgroundColor: '#F5F5F5',
     borderRadius: 6,
-    padding: 2,
-    marginRight: 8,
+    padding: s(2),
+    marginRight: s(8),
   },
   unitBtn: {
     paddingHorizontal: 10,
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   unitBtnActive: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colorPalette.primary,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     color: colorPalette.secondaryText,
   },
   unitTextActive: {
-    color: colorPalette.primaryText,
+    color: colorPalette.surface,
   },
   spacer: {
     height: vs(40),

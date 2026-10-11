@@ -5,7 +5,8 @@ import { Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'rea
 import ActionButton from '@/components/buttons/ActionButton';
 import { ThemedText } from '@/components/themed-text';
 import { colorPalette } from '@/constants/styles';
-import { vs } from '@/utils/size';
+import { s, vs } from '@/utils/size';
+import { Image } from 'expo-image';
 
 const FIT_OPTIONS = [
   'Yes, I know my size',
@@ -85,9 +86,12 @@ export function YourFitStep1({ onContinue }: YourFitStep1Props) {
       <Modal visible={showModal} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <View style={styles.modalIconContainer}>
+            {/* <View style={styles.modalIconContainer}>
               <Text style={{ fontSize: 40 }}>✨</Text>
-            </View>
+            </View> */}
+            <Image 
+            source={require("@/assets/images/arrow.png")}
+            style={styles.modalIconContainer} />
 
             <ThemedText type="heading2" style={styles.modalTitle}>
               That's completely fine. We'll help you figure it out.
@@ -158,15 +162,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    padding: 24,
-    paddingBottom: 40,
+    padding: s(24),
+    paddingBottom: s(40),
     alignItems: 'center',
   },
   modalIconContainer: {
-    width: 80,
-    height: 80,
+    width: s(80),
+    height: s(80),
     borderRadius: 40,
-    backgroundColor: '#FBF8F4',
+    // backgroundColor: '#FBF8F4',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: vs(24),
