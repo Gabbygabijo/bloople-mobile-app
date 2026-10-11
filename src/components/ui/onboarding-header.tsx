@@ -27,7 +27,7 @@ export function OnboardingHeader({ currentStep, totalSteps, stepTitle, onBack }:
     <View style={styles.container}>
       <TouchableOpacity onPress={handleBack} style={styles.backButtonWrapper}>
         {Platform.OS === 'ios' && parseInt(String(Platform.Version), 10) >= 26 ? (
-          <GlassView glassEffectStyle="regular" style={styles.backButtonInner}>
+          <GlassView glassEffectStyle="clear" style={styles.backButtonInner}>
             <Ionicons name="chevron-back" size={20} color={colorPalette.primaryText} />
           </GlassView>
         ) : (
