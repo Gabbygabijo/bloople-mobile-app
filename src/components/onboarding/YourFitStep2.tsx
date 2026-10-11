@@ -1,4 +1,3 @@
-import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -38,8 +37,6 @@ interface YourFitStep2Props {
 }
 
 export function YourFitStep2({ onContinue }: YourFitStep2Props) {
-  const router = useRouter();
-  
   const [region, setRegion] = useState<RegionType>('UK');
   const [band, setBand] = useState<string | null>(null);
   const [cup, setCup] = useState<string | null>(null);
@@ -58,7 +55,6 @@ export function YourFitStep2({ onContinue }: YourFitStep2Props) {
 
   const handleContinue = () => {
     onContinue({ region, band, cup, fitPreference });
-    router.replace('/');
   };
 
   const getSelectedDisplay = () => {
