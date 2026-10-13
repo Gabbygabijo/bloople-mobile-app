@@ -14,7 +14,7 @@ interface OnboardingHeaderProps {
 
 export function OnboardingHeader({ currentStep, totalSteps, stepTitle, onBack }: OnboardingHeaderProps) {
   const router = useRouter();
-  
+
   const handleBack = () => {
     if (onBack) {
       onBack();
@@ -22,11 +22,11 @@ export function OnboardingHeader({ currentStep, totalSteps, stepTitle, onBack }:
       router.back();
     }
   };
-
+  const condition = (Platform.OS === 'ios' || Platform.OS === 'macos') && parseInt(String(Platform.Version), 10) >= 26
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={handleBack} style={styles.backButtonWrapper}>
-        {Platform.OS === 'ios' && parseInt(String(Platform.Version), 10) >= 26 ? (
+        {condition ? (
           <GlassView glassEffectStyle="clear" style={styles.backButtonInner}>
             <Ionicons name="chevron-back" size={20} color={colorPalette.primaryText} />
           </GlassView>
@@ -36,17 +36,17 @@ export function OnboardingHeader({ currentStep, totalSteps, stepTitle, onBack }:
           </View>
         )}
       </TouchableOpacity>
-      
+
       <Text style={styles.stepTitle}>{stepTitle}</Text>
-      
+
       <View style={styles.progressContainer}>
         {Array.from({ length: totalSteps }).map((_, index) => (
-          <View 
-            key={index} 
+          <View
+            key={index}
             style={[
-              styles.progressSegment, 
+              styles.progressSegment,
               index < currentStep ? styles.progressActive : styles.progressInactive
-            ]} 
+            ]}
           />
         ))}
       </View>
