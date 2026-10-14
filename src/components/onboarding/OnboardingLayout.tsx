@@ -12,6 +12,7 @@ interface OnboardingLayoutProps {
   totalSteps: number;
   stepTitle: string;
   onBack?: () => void;
+  progressStep?: number;
 }
 
 export function OnboardingLayout({ 
@@ -19,7 +20,8 @@ export function OnboardingLayout({
   currentStep, 
   totalSteps, 
   stepTitle,
-  onBack 
+  onBack,
+  progressStep
 }: OnboardingLayoutProps) {
   return (
     <ThemedView style={{ flex: 1 }}>
@@ -33,6 +35,7 @@ export function OnboardingLayout({
             totalSteps={totalSteps} 
             stepTitle={stepTitle}
             onBack={onBack}
+            progressStep={progressStep}
           />
           {children}
         </KeyboardAvoidingView>
