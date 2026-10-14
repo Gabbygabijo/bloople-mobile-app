@@ -10,9 +10,10 @@ interface OnboardingHeaderProps {
   totalSteps: number;
   stepTitle: string; // e.g., "About You"
   onBack?: () => void;
+  progressStep?: number;
 }
 
-export function OnboardingHeader({ currentStep, totalSteps, stepTitle, onBack }: OnboardingHeaderProps) {
+export function OnboardingHeader({ currentStep, totalSteps, stepTitle, onBack, progressStep }: OnboardingHeaderProps) {
   const router = useRouter();
 
   const handleBack = () => {
@@ -23,6 +24,8 @@ export function OnboardingHeader({ currentStep, totalSteps, stepTitle, onBack }:
     }
   };
   const condition = (Platform.OS === 'ios' || Platform.OS === 'macos') && parseInt(String(Platform.Version), 10) >= 26
+  const activeSegments = progressStep ?? currentStep;
+
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={handleBack} style={styles.backButtonWrapper}>
@@ -45,7 +48,7 @@ export function OnboardingHeader({ currentStep, totalSteps, stepTitle, onBack }:
             key={index}
             style={[
               styles.progressSegment,
-              index < currentStep ? styles.progressActive : styles.progressInactive
+              index < activeSegments ? styles.progressActive : styles.progressInactive
             ]}
           />
         ))}

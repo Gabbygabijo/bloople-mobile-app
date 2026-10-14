@@ -80,6 +80,7 @@ export function YourFitStep1({ onContinue }: YourFitStep1Props) {
         <ActionButton
           btnText="Continue"
           onPress={handleContinue}
+          disabled={!selectedOption}
         />
       </View>
 
