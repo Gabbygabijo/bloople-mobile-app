@@ -69,7 +69,7 @@ const ActionButton = ({
       alignItems: 'center'
     },
     btnText: {
-      color: disabled ? colorPalette.secondaryText : (textColor || colorPalette.background),
+      color: disabled ? colorPalette.primaryText : (textColor || colorPalette.background),
       textAlign: 'center',
     },
     loadingBtn: {
