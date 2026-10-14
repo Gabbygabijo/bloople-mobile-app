@@ -10,6 +10,9 @@ import { YourLifestyleStep1 } from '@/components/onboarding/YourLifestyleStep1';
 import { YourLifestyleStep2 } from '@/components/onboarding/YourLifestyleStep2';
 import { YourLifestyleStep3 } from '@/components/onboarding/YourLifestyleStep3';
 import { YourLifestyleStep4 } from '@/components/onboarding/YourLifestyleStep4';
+import { YourStyleStep1 } from '@/components/onboarding/YourStyleStep1';
+import { YourStyleStep2 } from '@/components/onboarding/YourStyleStep2';
+import { YourStyleStep3 } from '@/components/onboarding/YourStyleStep3';
 
 export default function OnboardingScreen() {
   const router = useRouter();
@@ -21,7 +24,7 @@ export default function OnboardingScreen() {
   const handleNextStep = (stepData: any) => {
     setOnboardingData(prev => ({ ...prev, ...stepData }));
     
-    if (currentStep < 8) {
+    if (currentStep < 11) {
       setCurrentStep(prev => prev + 1);
     } else {
       router.replace('/');
@@ -100,6 +103,36 @@ export default function OnboardingScreen() {
       );
       stepTitle = 'Your lifestyle (4/4)';
       progressStep = 3;
+      break;
+    case 9:
+      StepComponent = (
+        <YourStyleStep1
+          onContinue={handleNextStep}
+          initialSelections={onboardingData.preferredStyles}
+        />
+      );
+      stepTitle = 'Your style (1/3)';
+      progressStep = 4;
+      break;
+    case 10:
+      StepComponent = (
+        <YourStyleStep2
+          onContinue={handleNextStep}
+          initialSelections={onboardingData.braStyles}
+        />
+      );
+      stepTitle = 'Your style (2/3)';
+      progressStep = 4;
+      break;
+    case 11:
+      StepComponent = (
+        <YourStyleStep3
+          onContinue={handleNextStep}
+          initialSelection={onboardingData.pricePreference}
+        />
+      );
+      stepTitle = 'Your style (3/3)';
+      progressStep = 4;
       break;
     default:
       StepComponent = <AboutYouStep onContinue={handleNextStep} />;
