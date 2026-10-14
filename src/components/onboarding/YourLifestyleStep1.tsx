@@ -61,7 +61,9 @@ export function YourLifestyleStep1({ onContinue, initialSelections = [] }: YourL
         </ThemedText>
 
         <View style={styles.subHeaderRow}>
-          <Text style={styles.subtitle}>Choose up to 3.</Text>
+          <ThemedText type="bodyText1" style={styles.subtitle}>
+            Choose up to 3.
+          </ThemedText>
           <View style={styles.counterBadge}>
             <Text style={styles.counterText}>
               {selected.length}/{maxSelect}
@@ -114,8 +116,6 @@ const styles = StyleSheet.create({
     marginBottom: vs(24),
   },
   subtitle: {
-    fontFamily: 'Manrope_400Regular',
-    fontSize: 14,
     color: colorPalette.secondaryText,
   },
   counterBadge: {

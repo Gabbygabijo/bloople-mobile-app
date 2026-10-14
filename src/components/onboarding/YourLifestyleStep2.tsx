@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 import ActionButton from '@/components/buttons/ActionButton';
 import { ThemedText } from '@/components/themed-text';
@@ -54,7 +54,7 @@ export function YourLifestyleStep2({ onContinue, initialSelections = [] }: YourL
           What do you usually shop for?
         </ThemedText>
 
-        <Text style={styles.subtitle}>Select all that apply.</Text>
+        <ThemedText type='bodyText1' style={styles.subtitle}>Select all that apply.</ThemedText>
 
         <SelectionPillGroup
           options={SHOPPING_OPTIONS}
@@ -94,8 +94,6 @@ const styles = StyleSheet.create({
     marginBottom: vs(12),
   },
   subtitle: {
-    fontFamily: 'Manrope_400Regular',
-    fontSize: 14,
     color: colorPalette.secondaryText,
     marginBottom: vs(24),
   },

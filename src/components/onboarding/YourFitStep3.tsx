@@ -97,7 +97,7 @@ export function YourFitStep3({ onContinue }: YourFitStep3Props) {
     noneOption: string
   ) => (
     <View style={styles.sectionContainer}>
-      <ThemedText type='bodyText1' style={styles.sectionTitle}>{title}</ThemedText>
+      <Text style={styles.sectionTitle}>{title}</Text>
       <View style={styles.pillsContainer}>
         {items.map((item) => {
           const isSelected = selections.includes(item);
@@ -129,7 +129,9 @@ export function YourFitStep3({ onContinue }: YourFitStep3Props) {
           What fit problems do you usually experience?
         </ThemedText>
 
-        <Text style={styles.subheading}>Select all that apply</Text>
+        <ThemedText type="bodyText1" style={styles.subheading}>
+          Select all that apply
+        </ThemedText>
 
         {/* Band */}
         {renderSection('Band', BAND_PROBLEMS, bandSelections, setBandSelections, 'None of these')}
@@ -186,8 +188,6 @@ const styles = StyleSheet.create({
     marginBottom: vs(8),
   },
   subheading: {
-    fontFamily: 'Manrope_400Regular',
-    fontSize: 14,
     color: colorPalette.secondaryText,
     marginBottom: vs(24),
   },
@@ -195,6 +195,8 @@ const styles = StyleSheet.create({
     marginBottom: vs(24),
   },
   sectionTitle: {
+    fontFamily: 'Manrope_600SemiBold',
+    fontSize: 16,
     color: colorPalette.secondaryText,
     marginBottom: vs(12),
   },
