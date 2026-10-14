@@ -21,10 +21,22 @@ export default function OnboardingScreen() {
 
   const [onboardingData, setOnboardingData] = useState<Record<string, any>>({});
 
+  const isSkippingSize =
+    onboardingData.skippedSize ||
+    onboardingData.fitStatus === "I'm not sure" ||
+    onboardingData.fitStatus === "I've never been properly fitted";
+
   const handleNextStep = (stepData: any) => {
     setOnboardingData(prev => ({ ...prev, ...stepData }));
     
-    if (currentStep < 11) {
+    const shouldSkipSize =
+      stepData?.skippedSize ||
+      stepData?.fitStatus === "I'm not sure" ||
+      stepData?.fitStatus === "I've never been properly fitted";
+
+    if (currentStep === 2 && shouldSkipSize) {
+      setCurrentStep(4);
+    } else if (currentStep < 11) {
       setCurrentStep(prev => prev + 1);
     } else {
       router.replace('/');
@@ -32,7 +44,9 @@ export default function OnboardingScreen() {
   };
 
   const handleBack = () => {
-    if (currentStep > 1) {
+    if (currentStep === 4 && isSkippingSize) {
+      setCurrentStep(2);
+    } else if (currentStep > 1) {
       setCurrentStep(prev => prev - 1);
     } else {
       router.back();
@@ -50,8 +64,13 @@ export default function OnboardingScreen() {
       progressStep = 1;
       break;
     case 2:
-      StepComponent = <YourFitStep1 onContinue={handleNextStep} />;
-      stepTitle = 'Your fit (1/3)';
+      StepComponent = (
+        <YourFitStep1
+          onContinue={handleNextStep}
+          initialSelection={onboardingData.fitStatus}
+        />
+      );
+      stepTitle = isSkippingSize ? 'Your fit (1/2)' : 'Your fit (1/3)';
       progressStep = 2;
       break;
     case 3:
@@ -61,7 +80,7 @@ export default function OnboardingScreen() {
       break;
     case 4:
       StepComponent = <YourFitStep3 onContinue={handleNextStep} />;
-      stepTitle = 'Your fit (3/3)';
+      stepTitle = isSkippingSize ? 'Your fit (2/2)' : 'Your fit (3/3)';
       progressStep = 2;
       break;
     case 5:
