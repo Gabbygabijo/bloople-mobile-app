@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler';
 import {
   CormorantGaramond_400Regular,
   CormorantGaramond_700Bold,
@@ -7,10 +8,12 @@ import {
   Manrope_600SemiBold,
   Manrope_700Bold,
 } from '@expo-google-fonts/manrope';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useFonts } from 'expo-font';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider, router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useColorScheme } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 // AppTabs moved to (tabs)/_layout.tsx
@@ -42,17 +45,23 @@ export default function RootLayout() {
   });
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      {/* ── Main app Stack (handles file-based routing) ── */}
-      <Stack screenOptions={{ headerShown: false }} />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <BottomSheetModalProvider>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          {/* ── Main app Stack (handles file-based routing) ── */}
+          <Stack screenOptions={{ headerShown: false }} />
 
-      {/* ── Welcome 2 overlay (z-index 500) ── */}
-        <WelcomeScreen onGetStarted={() => {
-          router.push('/onboarding');
-        }} />
+          {/* ── Welcome 2 overlay (z-index 500) ── */}
+          <WelcomeScreen
+            onGetStarted={() => {
+              router.push('/onboarding');
+            }}
+          />
 
-      {/* ── Splash + Welcome 1 overlay (z-index 1000, highest) ── */}
-      <AnimatedSplashOverlay fontsLoaded={fontsLoaded ?? false} />
-    </ThemeProvider>
+          {/* ── Splash + Welcome 1 overlay (z-index 1000, highest) ── */}
+          <AnimatedSplashOverlay fontsLoaded={fontsLoaded ?? false} />
+        </ThemeProvider>
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
 }

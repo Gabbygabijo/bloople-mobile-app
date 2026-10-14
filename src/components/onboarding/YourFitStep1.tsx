@@ -1,9 +1,9 @@
-import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import ActionButton from '@/components/buttons/ActionButton';
 import { ThemedText } from '@/components/themed-text';
+import { DynamicBottomSheet } from '@/components/ui/dynamic-bottom-sheet';
 import { colorPalette } from '@/constants/styles';
 import { s, vs } from '@/utils/size';
 import { Image } from 'expo-image';
@@ -17,11 +17,11 @@ const FIT_OPTIONS = [
 
 interface YourFitStep1Props {
   onContinue: (data: any) => void;
+  initialSelection?: string;
 }
 
-export function YourFitStep1({ onContinue }: YourFitStep1Props) {
-  const router = useRouter();
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+export function YourFitStep1({ onContinue, initialSelection }: YourFitStep1Props) {
+  const [selectedOption, setSelectedOption] = useState<string | null>(initialSelection ?? null);
   const [showModal, setShowModal] = useState(false);
 
   const handleContinue = () => {
@@ -34,8 +34,7 @@ export function YourFitStep1({ onContinue }: YourFitStep1Props) {
 
   const handleModalContinue = () => {
     setShowModal(false);
-    // Based on original logic, going to the main app directly
-    router.replace('/');
+    onContinue({ fitStatus: selectedOption, skippedSize: true });
   };
 
   return (
@@ -84,31 +83,22 @@ export function YourFitStep1({ onContinue }: YourFitStep1Props) {
         />
       </View>
 
-      <Modal visible={showModal} transparent animationType="fade">
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            {/* <View style={styles.modalIconContainer}>
-              <Text style={{ fontSize: 40 }}>✨</Text>
-            </View> */}
-            <Image 
+      <DynamicBottomSheet
+        visible={showModal}
+        setVisible={setShowModal}
+        icon={
+          <Image
             source={require("@/assets/images/arrow.png")}
-            style={styles.modalIconContainer} />
-
-            <ThemedText type="heading2" style={styles.modalTitle}>
-              That's completely fine. We'll help you figure it out.
-            </ThemedText>
-
-            <Text style={styles.modalBody}>
-              You can still continue — we'll use your preference and fit experiences to personalise your recommendations.
-            </Text>
-
-            <ActionButton
-              btnText="Continue"
-              onPress={handleModalContinue}
-            />
-          </View>
-        </View>
-      </Modal>
+            style={styles.sheetIcon}
+          />
+        }
+        title="That's completely fine. We'll help you figure it out."
+        description="You can still continue — we'll use your preference and fit experiences to personalise your recommendations."
+        primaryButton={{
+          text: "Continue",
+          onPress: handleModalContinue,
+        }}
+      />
     </>
   );
 }
@@ -153,39 +143,8 @@ const styles = StyleSheet.create({
   footer: {
     paddingVertical: vs(12),
   },
-  // Modal Styles
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    padding: s(24),
-    paddingBottom: s(40),
-    alignItems: 'center',
-  },
-  modalIconContainer: {
+  sheetIcon: {
     width: s(80),
     height: s(80),
-    borderRadius: 40,
-    // backgroundColor: '#FBF8F4',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: vs(24),
   },
-  modalTitle: {
-    textAlign: 'center',
-    marginBottom: vs(12),
-  },
-  modalBody: {
-    fontFamily: 'Manrope_400Regular',
-    fontSize: 14,
-    color: colorPalette.secondaryText,
-    textAlign: 'center',
-    marginBottom: vs(32),
-    lineHeight: 20,
-  }
 });
