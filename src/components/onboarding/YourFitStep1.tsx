@@ -1,4 +1,3 @@
-import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -17,11 +16,11 @@ const FIT_OPTIONS = [
 
 interface YourFitStep1Props {
   onContinue: (data: any) => void;
+  initialData?: Record<string, any>;
 }
 
-export function YourFitStep1({ onContinue }: YourFitStep1Props) {
-  const router = useRouter();
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+export function YourFitStep1({ onContinue, initialData = {} }: YourFitStep1Props) {
+  const [selectedOption, setSelectedOption] = useState<string | null>(initialData.fitStatus ?? null);
   const [showModal, setShowModal] = useState(false);
 
   const handleContinue = () => {
@@ -34,8 +33,7 @@ export function YourFitStep1({ onContinue }: YourFitStep1Props) {
 
   const handleModalContinue = () => {
     setShowModal(false);
-    // Based on original logic, going to the main app directly
-    router.replace('/');
+    onContinue({ fitStatus: selectedOption });
   };
 
   return (

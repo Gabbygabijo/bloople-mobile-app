@@ -8,13 +8,13 @@ import {
   Manrope_700Bold,
 } from '@expo-google-fonts/manrope';
 import { useFonts } from 'expo-font';
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider, router } from 'expo-router';
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useColorScheme } from 'react-native';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 // AppTabs moved to (tabs)/_layout.tsx
-import { WelcomeScreen } from '@/components/welcome-screen';
+import { BloopleApiProvider } from '@/state/BloopleApiContext';
 
 // Keep the native splash visible until our custom overlay takes over
 SplashScreen.preventAutoHideAsync();
@@ -25,10 +25,8 @@ SplashScreen.preventAutoHideAsync();
  *   [Native splash]
  *       ↓  (fonts loaded)
  *   [AnimatedSplashOverlay]  ← logo → "Welcome to [logo]" typewriter → fade out
- *       ↓  (overlay fades, revealing WelcomeScreen beneath)
- *   [WelcomeScreen]          ← hero image + "Get Started" CTA
- *       ↓  (user taps Get Started)
- *   [AppTabs]                ← main app
+ *       ↓
+ *   [Local connection] → [Welcome] → [Fit-DNA onboarding] → [Home summary]
  */
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -43,16 +41,10 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      {/* ── Main app Stack (handles file-based routing) ── */}
-      <Stack screenOptions={{ headerShown: false }} />
-
-      {/* ── Welcome 2 overlay (z-index 500) ── */}
-        <WelcomeScreen onGetStarted={() => {
-          router.push('/onboarding');
-        }} />
-
-      {/* ── Splash + Welcome 1 overlay (z-index 1000, highest) ── */}
-      <AnimatedSplashOverlay fontsLoaded={fontsLoaded ?? false} />
+      <BloopleApiProvider>
+        <Stack screenOptions={{ headerShown: false }} />
+        <AnimatedSplashOverlay fontsLoaded={fontsLoaded ?? false} />
+      </BloopleApiProvider>
     </ThemeProvider>
   );
 }
