@@ -48,14 +48,17 @@ const GENERAL_PROBLEMS = [
 
 interface YourFitStep3Props {
   onContinue: (data: any) => void;
+  initialData?: Record<string, any>;
+  submitError?: string | null;
+  isSaving?: boolean;
 }
 
-export function YourFitStep3({ onContinue }: YourFitStep3Props) {
-  const [bandSelections, setBandSelections] = useState<string[]>([]);
-  const [cupSelections, setCupSelections] = useState<string[]>([]);
-  const [strapsSelections, setStrapsSelections] = useState<string[]>([]);
-  const [generalSelections, setGeneralSelections] = useState<string[]>([]);
-  const [additionalNotes, setAdditionalNotes] = useState('');
+export function YourFitStep3({ onContinue, initialData = {}, submitError, isSaving }: YourFitStep3Props) {
+  const [bandSelections, setBandSelections] = useState<string[]>(initialData.bandProblems ?? []);
+  const [cupSelections, setCupSelections] = useState<string[]>(initialData.cupProblems ?? []);
+  const [strapsSelections, setStrapsSelections] = useState<string[]>(initialData.strapsProblems ?? []);
+  const [generalSelections, setGeneralSelections] = useState<string[]>(initialData.generalProblems ?? []);
+  const [additionalNotes, setAdditionalNotes] = useState(initialData.additionalNotes ?? '');
 
   const toggleSelection = (
     item: string,
@@ -170,13 +173,15 @@ export function YourFitStep3({ onContinue }: YourFitStep3Props) {
       </ScrollView>
 
       <View style={styles.footer}>
-        <ActionButton btnText="Continue" onPress={handleContinue} />
+        {submitError ? <Text style={styles.errorText}>{submitError}</Text> : null}
+        <ActionButton btnText="Save Fit-DNA" isLoading={isSaving} disabled={isSaving} onPress={handleContinue} />
       </View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
+  errorText: { color: '#A33333', marginBottom: vs(8) },
   scrollView: {
     flex: 1,
   },

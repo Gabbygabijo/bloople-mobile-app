@@ -19,17 +19,18 @@ const AGE_RANGE_OPTIONS: SelectOption[] = [
 
 interface AboutYouStepProps {
   onContinue: (data: any) => void;
+  initialData?: Record<string, any>;
 }
 
-export function AboutYouStep({ onContinue }: AboutYouStepProps) {
+export function AboutYouStep({ onContinue, initialData = {} }: AboutYouStepProps) {
   // State for form
-  const [firstName, setFirstName] = useState('');
-  const [ageRange, setAgeRange] = useState('');
-  const [email, setEmail] = useState('');
-  const [country, setCountry] = useState('United Kingdom');
-  const [phone, setPhone] = useState('');
-  const [height, setHeight] = useState('');
-  const [heightUnit, setHeightUnit] = useState<'cm' | 'ft/in'>('cm');
+  const [firstName, setFirstName] = useState(initialData.firstName ?? '');
+  const [ageRange, setAgeRange] = useState(initialData.ageRange ?? '');
+  const [email, setEmail] = useState(initialData.email ?? '');
+  const [country, setCountry] = useState(initialData.country ?? 'United Kingdom');
+  const [phone, setPhone] = useState(initialData.phone ?? '');
+  const [height, setHeight] = useState(initialData.height ?? '');
+  const [heightUnit, setHeightUnit] = useState<'cm' | 'ft/in'>(initialData.heightUnit ?? 'cm');
 
   const handleContinue = () => {
     onContinue({ firstName, ageRange, email, country, phone, height, heightUnit });
