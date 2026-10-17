@@ -17,11 +17,12 @@ const FIT_OPTIONS = [
 
 interface YourFitStep1Props {
   onContinue: (data: any) => void;
+  initialData?: Record<string, any>;
   initialSelection?: string;
 }
 
-export function YourFitStep1({ onContinue, initialSelection }: YourFitStep1Props) {
-  const [selectedOption, setSelectedOption] = useState<string | null>(initialSelection ?? null);
+export function YourFitStep1({ onContinue, initialData = {} }: YourFitStep1Props) {
+  const [selectedOption, setSelectedOption] = useState<string | null>(initialData.fitStatus ?? null);
   const [showModal, setShowModal] = useState(false);
 
   const handleContinue = () => {

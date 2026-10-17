@@ -6,6 +6,7 @@ import { ThemedText } from '@/components/themed-text';
 import { SelectField, SelectOption } from '@/components/ui/select-field';
 import { colorPalette } from '@/constants/styles';
 import { vs } from '@/utils/size';
+import { useBloopleApi } from '@/state/BloopleApiContext';
 
 type RegionType = 'UK' | 'US' | 'EU';
 
@@ -34,21 +35,24 @@ const FIT_OPTIONS: SelectOption[] = [
 
 interface YourFitStep2Props {
   onContinue: (data: any) => void;
+  initialData?: Record<string, any>;
 }
 
-export function YourFitStep2({ onContinue }: YourFitStep2Props) {
-  const [region, setRegion] = useState<RegionType>('UK');
-  const [band, setBand] = useState<string | null>(null);
-  const [cup, setCup] = useState<string | null>(null);
-  const [fitPreference, setFitPreference] = useState('');
+export function YourFitStep2({ onContinue, initialData = {} }: YourFitStep2Props) {
+  const { sizeOptions } = useBloopleApi();
+  const [region, setRegion] = useState<RegionType>(initialData.region ?? 'UK');
+  const [band, setBand] = useState<string | null>(initialData.band ?? null);
+  const [cup, setCup] = useState<string | null>(initialData.cup ?? null);
+  const [fitPreference, setFitPreference] = useState(initialData.fitPreference ?? '');
 
   const handleRegionChange = (newRegion: RegionType) => {
     setRegion(newRegion);
     // Reset band or cup if not available in selected region
-    if (band && !REGION_DATA[newRegion].bands.includes(band)) {
+    const options = sizeOptions?.[newRegion] ?? REGION_DATA[newRegion];
+    if (band && !options.bands.includes(band)) {
       setBand(null);
     }
-    if (cup && !REGION_DATA[newRegion].cups.includes(cup)) {
+    if (cup && !options.cups.includes(cup)) {
       setCup(null);
     }
   };
@@ -65,8 +69,8 @@ export function YourFitStep2({ onContinue }: YourFitStep2Props) {
     return `${region} ${sizePart}`;
   };
 
-  const currentBands = REGION_DATA[region].bands;
-  const currentCups = REGION_DATA[region].cups;
+  const currentBands = sizeOptions?.[region].bands ?? REGION_DATA[region].bands;
+  const currentCups = sizeOptions?.[region].cups ?? REGION_DATA[region].cups;
 
   const renderGrid = (
     items: string[],
@@ -305,4 +309,3 @@ const styles = StyleSheet.create({
     paddingVertical: vs(12),
   },
 });
-

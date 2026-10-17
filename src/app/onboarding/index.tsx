@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 
+import { FitDnaDraft, toFitDnaDraft } from '@/api/bloople';
 import { AboutYouStep } from '@/components/onboarding/AboutYouStep';
 import { OnboardingLayout } from '@/components/onboarding/OnboardingLayout';
 import { YourFitStep1 } from '@/components/onboarding/YourFitStep1';
@@ -13,33 +14,45 @@ import { YourLifestyleStep4 } from '@/components/onboarding/YourLifestyleStep4';
 import { YourStyleStep1 } from '@/components/onboarding/YourStyleStep1';
 import { YourStyleStep2 } from '@/components/onboarding/YourStyleStep2';
 import { YourStyleStep3 } from '@/components/onboarding/YourStyleStep3';
+import { useBloopleApi } from '@/state/BloopleApiContext';
+
+const isUncertainAboutSize = (status?: string) => status === "I'm not sure" || status === "I've never been properly fitted";
 
 export default function OnboardingScreen() {
   const router = useRouter();
+  const { profile, saveFitDna } = useBloopleApi();
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 5;
 
-  const [onboardingData, setOnboardingData] = useState<Record<string, any>>({});
+  const [onboardingData, setOnboardingData] = useState<Record<string, any>>(() => (profile ? toFitDnaDraft(profile) : {}));
+  const [isSaving, setIsSaving] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const isSkippingSize =
-    onboardingData.skippedSize ||
-    onboardingData.fitStatus === "I'm not sure" ||
-    onboardingData.fitStatus === "I've never been properly fitted";
+    onboardingData.skippedSize || isUncertainAboutSize(onboardingData.fitStatus);
 
-  const handleNextStep = (stepData: any) => {
-    setOnboardingData(prev => ({ ...prev, ...stepData }));
-    
+  const handleNextStep = async (stepData: any) => {
+    const nextData = { ...onboardingData, ...stepData };
+    setOnboardingData(nextData);
+    setSubmitError(null);
+
     const shouldSkipSize =
-      stepData?.skippedSize ||
-      stepData?.fitStatus === "I'm not sure" ||
-      stepData?.fitStatus === "I've never been properly fitted";
+      stepData?.skippedSize || isUncertainAboutSize(stepData?.fitStatus);
 
     if (currentStep === 2 && shouldSkipSize) {
       setCurrentStep(4);
     } else if (currentStep < 11) {
       setCurrentStep(prev => prev + 1);
     } else {
-      router.replace('/');
+      setIsSaving(true);
+      try {
+        await saveFitDna(nextData as FitDnaDraft);
+        router.replace('/(tabs)');
+      } catch (error) {
+        setSubmitError(error instanceof Error ? error.message : 'Could not save your Fit-DNA. Please try again.');
+      } finally {
+        setIsSaving(false);
+      }
     }
   };
 
@@ -171,4 +184,3 @@ export default function OnboardingScreen() {
     </OnboardingLayout>
   );
 }
-
