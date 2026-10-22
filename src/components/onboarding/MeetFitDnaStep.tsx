@@ -12,10 +12,12 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Defs, Rect, Stop, LinearGradient as SvgLinearGradient } from 'react-native-svg';
 
+import DoubbleArrowDown from '@/assets/svgs/DoubbleArrowDown';
 import ActionButton from '@/components/buttons/ActionButton';
 import { ThemedText } from '@/components/themed-text';
-import { colorPalette } from '@/constants/styles';
+import { colorPalette, Containers } from '@/constants/styles';
 import { s } from '@/utils/size';
+import { ThemedView } from '../themed-view';
 
 interface MeetFitDnaStepProps {
   onboardingData?: Record<string, any>;
@@ -47,32 +49,34 @@ export function MeetFitDnaStep({
     Array.isArray(onboardingData.shoppingCategories) && onboardingData.shoppingCategories.length > 0
       ? onboardingData.shoppingCategories
       : Array.isArray(onboardingData.clothesWorkFor) && onboardingData.clothesWorkFor.length > 0
-      ? onboardingData.clothesWorkFor
-      : ['Gym', 'Pilates', 'Everyday'];
+        ? onboardingData.clothesWorkFor
+        : ['Gym', 'Pilates', 'Everyday'];
 
   return (
-    <View style={styles.root}>
+    <ThemedView style={styles.root}>
       <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
-        {/* ── Top Navigation Bar ── */}
-        <View style={styles.topBar}>
-          <TouchableOpacity onPress={onBack} style={styles.backButtonWrapper} activeOpacity={0.7}>
-            {isGlassSupported ? (
-              <GlassView glassEffectStyle="clear" style={styles.backButtonInner}>
-                <Ionicons name="chevron-back" size={20} color={colorPalette.primaryText} />
-              </GlassView>
-            ) : (
-              <View style={[styles.backButtonInner, { backgroundColor: '#FFFFFF' }]}>
-                <Ionicons name="chevron-back" size={20} color={colorPalette.primaryText} />
-              </View>
-            )}
-          </TouchableOpacity>
-        </View>
-
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
+          stickyHeaderHiddenOnScroll
+          stickyHeaderIndices={[0]}
         >
+
+          {/* ── Top Navigation Bar ── */}
+          <View style={styles.topBar}>
+            <TouchableOpacity onPress={onBack} style={styles.backButtonWrapper} activeOpacity={0.7}>
+              {isGlassSupported ? (
+                <GlassView glassEffectStyle="clear" style={styles.backButtonInner}>
+                  <Ionicons name="chevron-back" size={20} color={colorPalette.primaryText} />
+                </GlassView>
+              ) : (
+                <View style={[styles.backButtonInner, { backgroundColor: '#FFFFFF' }]}>
+                  <Ionicons name="chevron-back" size={20} color={colorPalette.primaryText} />
+                </View>
+              )}
+            </TouchableOpacity>
+          </View>
           {/* ── Circular Graphic / Badge ── */}
           <View style={styles.badgeRow}>
             <Image
@@ -150,11 +154,11 @@ export function MeetFitDnaStep({
           {/* ── Scroll Prompt ── */}
           <View style={styles.scrollPromptSection}>
             <Text style={styles.scrollPromptText}>Scroll to explore your result</Text>
-            <Image
-              source={require('@/assets/scroll_indicator.svg')}
-              style={styles.scrollIndicatorImage}
-              contentFit="contain"
-            />
+            <View style={styles.arrowContainer}>
+              <ThemedView style={styles.arrowIndicator} />
+              <DoubbleArrowDown />
+              <ThemedView style={styles.arrowIndicator} />
+            </View>
           </View>
 
           {/* ── Section: What we've learned about your fit ── */}
@@ -196,7 +200,7 @@ export function MeetFitDnaStep({
                 <View style={styles.learnedCardText}>
                   <Text style={styles.learnedCardTitle}>Strap comfort matters to you</Text>
                   <Text style={styles.learnedCardBody}>
-                    We’ll highlight reviews from women with similar fit concerns.
+                    We'll highlight reviews from women with similar fit concerns.
                   </Text>
                 </View>
               </View>
@@ -205,7 +209,7 @@ export function MeetFitDnaStep({
 
           {/* ── Section: There's more waiting for you ── */}
           <View style={styles.moreSection}>
-            <Text style={styles.sectionHeading}>There’s more waiting for you</Text>
+            <Text style={styles.sectionHeading}>There's more waiting for you</Text>
 
             <View style={styles.featuresRowContainer}>
               {/* Feature 1 */}
@@ -215,7 +219,7 @@ export function MeetFitDnaStep({
                   style={styles.featureIcon}
                   contentFit="contain"
                 />
-                <Text style={styles.featureTitle}>Recommendations</Text>
+                <ThemedText type='caption' style={styles.featureTitle}>Recommendations</ThemedText>
                 <Text style={styles.featureBody}>Products tailored to your fit and style</Text>
               </View>
 
@@ -228,7 +232,7 @@ export function MeetFitDnaStep({
                   style={styles.featureIcon}
                   contentFit="contain"
                 />
-                <Text style={styles.featureTitle}>Your fit advice</Text>
+                <ThemedText type='caption' style={styles.featureTitle}>Your fit advice</ThemedText>
                 <Text style={styles.featureBody}>Guidance based on your fit concerns</Text>
               </View>
 
@@ -241,7 +245,7 @@ export function MeetFitDnaStep({
                   style={styles.featureIcon}
                   contentFit="contain"
                 />
-                <Text style={styles.featureTitle}>Women like you</Text>
+                <ThemedText type='caption' style={styles.featureTitle}>Women like you</ThemedText>
                 <Text style={styles.featureBody}>Relevant review and real experiences.</Text>
               </View>
             </View>
@@ -301,7 +305,7 @@ export function MeetFitDnaStep({
           </View>
         </ScrollView>
       </SafeAreaView>
-    </View>
+    </ThemedView>
   );
 }
 
@@ -309,16 +313,13 @@ export function MeetFitDnaStep({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: '#FBF8F4',
   },
   safeArea: {
     flex: 1,
-    backgroundColor: '#FBF8F4',
   },
   topBar: {
-    paddingHorizontal: 24,
-    paddingTop: 8,
-    paddingBottom: 4,
+    paddingTop: s(8),
+    paddingBottom: s(4),
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -341,8 +342,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 24,
-    paddingBottom: 40,
+    ...Containers.defaultContainer,
+    paddingBottom: s(40),
     gap: 20,
   },
 
@@ -353,8 +354,8 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   badgeImage: {
-    width: 100,
-    height: 100,
+    width: s(100),
+    height: s(100),
   },
 
   // Titles
@@ -364,15 +365,11 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: 'center',
-    color: '#241F23',
-    fontFamily: 'CormorantGaramond_700Bold',
-    fontSize: 30,
+    color: colorPalette.primaryText,
     lineHeight: 36,
   },
   subtitle: {
-    fontFamily: 'Manrope_400Regular',
-    fontSize: 14,
-    color: '#706970',
+    color: colorPalette.secondaryText,
     textAlign: 'center',
   },
 
@@ -452,11 +449,18 @@ const styles = StyleSheet.create({
   scrollPromptText: {
     fontFamily: 'Manrope_400Regular',
     fontSize: 14,
-    color: '#706970',
+    color: colorPalette.secondaryText,
   },
-  scrollIndicatorImage: {
-    width: '100%',
-    height: 24,
+  arrowContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%'
+  },
+  arrowIndicator: {
+    width: '40%',
+    height: 1,
+    backgroundColor: colorPalette.border,
   },
 
   // Learned Section
@@ -467,12 +471,12 @@ const styles = StyleSheet.create({
   sectionHeading: {
     fontFamily: 'Manrope_600SemiBold',
     fontSize: 16,
-    color: '#241F23',
+    color: colorPalette.primaryText,
   },
   sectionSubtitle: {
     fontFamily: 'Manrope_400Regular',
     fontSize: 14,
-    color: '#706970',
+    color: colorPalette.secondaryText,
     lineHeight: 20,
     marginBottom: 8,
   },
@@ -505,8 +509,8 @@ const styles = StyleSheet.create({
     height: 24,
   },
   learnedIconSvg: {
-    width: 24,
-    height: 24,
+    width: s(24),
+    height: s(24),
   },
   learnedCardText: {
     flex: 1,
@@ -515,13 +519,13 @@ const styles = StyleSheet.create({
   learnedCardTitle: {
     fontFamily: 'Manrope_400Regular',
     fontSize: 15,
-    color: '#241F23',
+    color: colorPalette.primaryText,
     fontWeight: '600',
   },
   learnedCardBody: {
     fontFamily: 'Manrope_400Regular',
     fontSize: 13,
-    color: '#706970',
+    color: colorPalette.secondaryText,
     lineHeight: 18,
   },
 
@@ -532,7 +536,7 @@ const styles = StyleSheet.create({
   },
   featuresRowContainer: {
     backgroundColor: '#F7F2FC',
-    borderRadius: 12,
+    borderRadius: s(12),
     padding: 16,
     flexDirection: 'row',
     alignItems: 'flex-start',
@@ -549,15 +553,12 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   featureTitle: {
-    fontFamily: 'Manrope_400Regular',
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#241F23',
+    color: colorPalette.primaryText,
   },
   featureBody: {
     fontFamily: 'Manrope_400Regular',
     fontSize: 10,
-    color: '#706970',
+    color: colorPalette.secondaryText,
     lineHeight: 14,
   },
   featureDivider: {
