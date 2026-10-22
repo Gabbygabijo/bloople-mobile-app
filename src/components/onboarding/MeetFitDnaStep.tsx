@@ -12,11 +12,15 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Defs, Rect, Stop, LinearGradient as SvgLinearGradient } from 'react-native-svg';
 
-import DoubbleArrowDown from '@/assets/svgs/DoubbleArrowDown';
 import ActionButton from '@/components/buttons/ActionButton';
+import { BustFullnessStep } from '@/components/onboarding/BustFullnessStep';
+import { MeasurementsStep } from '@/components/onboarding/MeasurementsStep';
 import { ThemedText } from '@/components/themed-text';
+import { DynamicBottomSheet } from '@/components/ui/dynamic-bottom-sheet';
 import { colorPalette, Containers } from '@/constants/styles';
 import { s } from '@/utils/size';
+import { useState } from 'react';
+import DoubbleArrowDown from '../../assets/svgs/DoubbleArrowDown';
 import { ThemedView } from '../themed-view';
 
 interface MeetFitDnaStepProps {
@@ -30,9 +34,41 @@ export function MeetFitDnaStep({
   onContinue,
   onBack,
 }: MeetFitDnaStepProps) {
+  const [subStep, setSubStep] = useState<'main' | 'fullness' | 'measurements'>('main');
+  const [showImproveModal, setShowImproveModal] = useState(false);
+  const [fitDnaData, setFitDnaData] = useState<Record<string, any>>(onboardingData);
+
   const isGlassSupported =
     (Platform.OS === 'ios' || Platform.OS === 'macos') &&
     parseInt(String(Platform.Version), 10) >= 26;
+
+  if (subStep === 'fullness') {
+    return (
+      <BustFullnessStep
+        initialSelection={fitDnaData.bustFullness}
+        onContinue={(data) => {
+          setFitDnaData((prev) => ({ ...prev, ...data }));
+          setSubStep('measurements');
+        }}
+        onBack={() => setSubStep('main')}
+      />
+    );
+  }
+
+  if (subStep === 'measurements') {
+    return (
+      <MeasurementsStep
+        initialUnderbust={fitDnaData.underbust}
+        initialOverbust={fitDnaData.overbust}
+        onContinue={(data) => {
+          const finalData = { ...fitDnaData, ...data };
+          setFitDnaData(finalData);
+          onContinue(finalData);
+        }}
+        onBack={() => setSubStep('fullness')}
+      />
+    );
+  }
 
   // Derive dynamic user fit data with Figma defaults as fallback
   const region = onboardingData.region || 'UK';
@@ -273,7 +309,7 @@ export function MeetFitDnaStep({
               <View style={styles.gradientRow}>
                 <View style={styles.gradientTextCol}>
                   <ThemedText style={styles.gradientHeading}>
-                    We’ve found 3+ bras matched to your Fit-DNA!
+                    We've found 3+ bras matched to your Fit-DNA!
                   </ThemedText>
                   <Text style={styles.gradientSub}>
                     Selected around your size, fit concerns, style and preferences.
@@ -300,11 +336,45 @@ export function MeetFitDnaStep({
                   contentFit="contain"
                 />
               }
-              onPress={() => onContinue()}
+              onPress={() => setShowImproveModal(true)}
             />
           </View>
         </ScrollView>
       </SafeAreaView>
+
+      {/* ── Improve Fit-DNA Bottom Sheet Modal ── */}
+      <DynamicBottomSheet
+        visible={showImproveModal}
+        setVisible={setShowImproveModal}
+        backgroundStyle={{ backgroundColor: colorPalette.background }}
+        icon={
+          <Image
+            source={require('@/assets/images/arrow.png')}
+            style={styles.modalIcon}
+            contentFit="contain"
+          />
+        }
+        title="Want even more personalised recommendations?"
+        description="Add a few more details to make your Fit-DNA even more accurate."
+        primaryButton={{
+          text: 'Improve my Fit-DNA',
+          onPress: () => {
+            setShowImproveModal(false);
+            setSubStep('fullness');
+          },
+        }}
+        secondaryButton={{
+          text: "I'll do this later",
+          onPress: () => {
+            setShowImproveModal(false);
+            onContinue(fitDnaData);
+          },
+          bgColor: 'transparent',
+          textColor: colorPalette.primary,
+          borderColor: 'transparent',
+          borderWidth: 0,
+        }}
+      />
     </ThemedView>
   );
 }
@@ -634,5 +704,9 @@ const styles = StyleSheet.create({
   arrowDownIcon: {
     width: 20,
     height: 20,
+  },
+  modalIcon: {
+    width: s(80),
+    height: s(80),
   },
 });
