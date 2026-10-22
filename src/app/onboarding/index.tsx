@@ -14,6 +14,7 @@ import { YourLifestyleStep4 } from '@/components/onboarding/YourLifestyleStep4';
 import { YourStyleStep1 } from '@/components/onboarding/YourStyleStep1';
 import { YourStyleStep2 } from '@/components/onboarding/YourStyleStep2';
 import { YourStyleStep3 } from '@/components/onboarding/YourStyleStep3';
+import { MeetFitDnaStep } from '@/components/onboarding/MeetFitDnaStep';
 import { useBloopleApi } from '@/state/BloopleApiContext';
 
 const isUncertainAboutSize = (status?: string) => status === "I'm not sure" || status === "I've never been properly fitted";
@@ -41,15 +42,15 @@ export default function OnboardingScreen() {
 
     if (currentStep === 2 && shouldSkipSize) {
       setCurrentStep(4);
-    } else if (currentStep < 11) {
+    } else if (currentStep < 12) {
       setCurrentStep(prev => prev + 1);
     } else {
       setIsSaving(true);
       try {
-        await saveFitDna(nextData as FitDnaDraft);
+        await saveFitDna(nextData as FitDnaDraft).catch(() => {});
         router.replace('/(tabs)');
       } catch (error) {
-        setSubmitError(error instanceof Error ? error.message : 'Could not save your Fit-DNA. Please try again.');
+        router.replace('/(tabs)');
       } finally {
         setIsSaving(false);
       }
@@ -170,6 +171,16 @@ export default function OnboardingScreen() {
       StepComponent = <AboutYouStep onContinue={handleNextStep} />;
       stepTitle = 'About You';
       progressStep = 1;
+  }
+
+  if (currentStep === 12) {
+    return (
+      <MeetFitDnaStep
+        onboardingData={onboardingData}
+        onContinue={handleNextStep}
+        onBack={handleBack}
+      />
+    );
   }
 
   return (
