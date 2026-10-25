@@ -14,7 +14,11 @@ import Svg, { Defs, Rect, Stop, LinearGradient as SvgLinearGradient } from 'reac
 
 import ActionButton from '@/components/buttons/ActionButton';
 import { BustFullnessStep } from '@/components/onboarding/BustFullnessStep';
+import { CommunityUsernameStep } from '@/components/onboarding/CommunityUsernameStep';
 import { MeasurementsStep } from '@/components/onboarding/MeasurementsStep';
+import { PaddingPreferenceStep } from '@/components/onboarding/PaddingPreferenceStep';
+import { PreferredCoverageStep } from '@/components/onboarding/PreferredCoverageStep';
+import { PreferredSupportStep } from '@/components/onboarding/PreferredSupportStep';
 import { ThemedText } from '@/components/themed-text';
 import { DynamicBottomSheet } from '@/components/ui/dynamic-bottom-sheet';
 import { colorPalette, Containers } from '@/constants/styles';
@@ -34,8 +38,11 @@ export function MeetFitDnaStep({
   onContinue,
   onBack,
 }: MeetFitDnaStepProps) {
-  const [subStep, setSubStep] = useState<'main' | 'fullness' | 'measurements'>('main');
+  const [subStep, setSubStep] = useState<
+    'main' | 'fullness' | 'measurements' | 'coverage' | 'support' | 'padding' | 'username'
+  >('main');
   const [showImproveModal, setShowImproveModal] = useState(false);
+  const [showCommunityModal, setShowCommunityModal] = useState(false);
   const [fitDnaData, setFitDnaData] = useState<Record<string, any>>(onboardingData);
 
   const isGlassSupported =
@@ -61,11 +68,67 @@ export function MeetFitDnaStep({
         initialUnderbust={fitDnaData.underbust}
         initialOverbust={fitDnaData.overbust}
         onContinue={(data) => {
+          setFitDnaData((prev) => ({ ...prev, ...data }));
+          setSubStep('coverage');
+        }}
+        onBack={() => setSubStep('fullness')}
+      />
+    );
+  }
+
+  if (subStep === 'coverage') {
+    return (
+      <PreferredCoverageStep
+        initialSelection={fitDnaData.preferredCoverage}
+        onContinue={(data) => {
+          setFitDnaData((prev) => ({ ...prev, ...data }));
+          setSubStep('support');
+        }}
+        onBack={() => setSubStep('measurements')}
+      />
+    );
+  }
+
+  if (subStep === 'support') {
+    return (
+      <PreferredSupportStep
+        initialSelection={fitDnaData.preferredSupport}
+        onContinue={(data) => {
+          setFitDnaData((prev) => ({ ...prev, ...data }));
+          setSubStep('padding');
+        }}
+        onBack={() => setSubStep('coverage')}
+      />
+    );
+  }
+
+  if (subStep === 'padding') {
+    return (
+      <PaddingPreferenceStep
+        initialSelection={fitDnaData.paddingPreference}
+        onContinue={(data) => {
+          setFitDnaData((prev) => ({ ...prev, ...data }));
+          setSubStep('main');
+          setShowCommunityModal(true);
+        }}
+        onBack={() => setSubStep('support')}
+      />
+    );
+  }
+
+  if (subStep === 'username') {
+    return (
+      <CommunityUsernameStep
+        initialUsername={fitDnaData.communityUsername}
+        onContinue={(data) => {
           const finalData = { ...fitDnaData, ...data };
           setFitDnaData(finalData);
           onContinue(finalData);
         }}
-        onBack={() => setSubStep('fullness')}
+        onBack={() => {
+          setSubStep('main');
+          setShowCommunityModal(true);
+        }}
       />
     );
   }
@@ -367,6 +430,40 @@ export function MeetFitDnaStep({
           text: "I'll do this later",
           onPress: () => {
             setShowImproveModal(false);
+            setShowCommunityModal(true);
+          },
+          bgColor: 'transparent',
+          textColor: colorPalette.primary,
+          borderColor: 'transparent',
+          borderWidth: 0,
+        }}
+      />
+
+      {/* ── Join the Community Bottom Sheet Modal ── */}
+      <DynamicBottomSheet
+        visible={showCommunityModal}
+        setVisible={setShowCommunityModal}
+        backgroundStyle={{ backgroundColor: colorPalette.background }}
+        icon={
+          <Image
+            source={require('@/assets/images/arrow.png')}
+            style={styles.modalIcon}
+            contentFit="contain"
+          />
+        }
+        title="Join the Community"
+        description="Ask questions. Share your experience. Find women who get it."
+        primaryButton={{
+          text: 'Join Community',
+          onPress: () => {
+            setShowCommunityModal(false);
+            setSubStep('username');
+          },
+        }}
+        secondaryButton={{
+          text: "I'll do this later",
+          onPress: () => {
+            setShowCommunityModal(false);
             onContinue(fitDnaData);
           },
           bgColor: 'transparent',

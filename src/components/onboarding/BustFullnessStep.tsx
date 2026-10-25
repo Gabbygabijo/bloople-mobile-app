@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { GlassView } from 'expo-glass-effect';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Platform,
   ScrollView,
