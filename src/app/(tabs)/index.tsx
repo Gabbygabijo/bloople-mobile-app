@@ -4,27 +4,18 @@ import { useRouter } from 'expo-router';
 import {
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Defs, Rect, Stop, LinearGradient as SvgLinearGradient } from 'react-native-svg';
 
+import { ProductCard, type ProductItem } from '@/components/cards/ProductCard';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { colorPalette } from '@/constants/styles';
 import { useBloopleApi } from '@/state/BloopleApiContext';
 import { s, vs } from '@/utils/size';
-
-interface ProductItem {
-  id: string;
-  brand: string;
-  title: string;
-  price: string;
-  matchScore: string;
-  image: any;
-}
 
 const FOR_YOU_PRODUCTS: ProductItem[] = [
   {
@@ -33,7 +24,7 @@ const FOR_YOU_PRODUCTS: ProductItem[] = [
     title: 'Full Coverage T-Shirt Bra',
     price: '£38',
     matchScore: '94% match',
-    image: require('@/assets/images/products/white_tshirt_bra.jpg'),
+    image: require('@/assets/images/products/Full-Coverage-T-Shirt-Bra.png'),
   },
   {
     id: '2',
@@ -122,34 +113,41 @@ export default function HomeScreen() {
     <ThemedView style={styles.root}>
       <SafeAreaView style={styles.safeArea} edges={['top']}>
         {/* ── Top Header Bar ── */}
-        <View style={styles.headerBar}>
-          <View style={styles.welcomeRow}>
-            <ThemedText style={styles.welcomePrefix}>Welcome back, </ThemedText>
-            <ThemedText style={styles.welcomeName}>{name}</ThemedText>
-          </View>
 
-          <TouchableOpacity
-            style={styles.sizePill}
-            activeOpacity={0.7}
-            onPress={() => router.push('/(tabs)/profile')}
-          >
-            <Text style={styles.sizePillText}>{sizeLabel}</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Faint Divider */}
-        <View style={styles.headerDivider} />
 
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
+          stickyHeaderHiddenOnScroll
+          stickyHeaderIndices={[0]}
         >
+          <ThemedView>
+            <View style={styles.headerBar}>
+              <View style={styles.welcomeRow}>
+                <ThemedText style={styles.welcomePrefix}>Welcome back, </ThemedText>
+                <ThemedText style={styles.welcomeName}>{name}</ThemedText>
+              </View>
+
+              <TouchableOpacity
+                style={styles.sizePill}
+                activeOpacity={0.7}
+                onPress={() => router.push('/(tabs)/profile')}
+              >
+                <ThemedText type="caption" style={styles.sizePillText}>{sizeLabel}</ThemedText>
+              </TouchableOpacity>
+            </View>
+
+            {/* Faint Divider */}
+            <View style={styles.headerDivider} />
+          </ThemedView>
           {/* ── 1. For You Section ── */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>For You</Text>
-              <Text style={styles.sectionSubtitle}>Matched to your Fit-DNA</Text>
+              <ThemedText type="heading4" style={styles.sectionTitle}>For You</ThemedText>
+              <ThemedText type="caption" themeColor="textSecondary" style={styles.sectionSubtitle}>
+                Matched to your Fit-DNA
+              </ThemedText>
             </View>
 
             <ScrollView
@@ -158,25 +156,7 @@ export default function HomeScreen() {
               contentContainerStyle={styles.carouselContent}
             >
               {FOR_YOU_PRODUCTS.map((item) => (
-                <View key={item.id} style={styles.productCard}>
-                  <View style={styles.productImageContainer}>
-                    <Image
-                      source={item.image}
-                      style={styles.productImage}
-                      contentFit="contain"
-                    />
-                  </View>
-                  <View style={styles.productDetails}>
-                    <Text style={styles.productBrand}>{item.brand}</Text>
-                    <Text style={styles.productTitle} numberOfLines={1}>
-                      {item.title}
-                    </Text>
-                    <View style={styles.productPriceRow}>
-                      <Text style={styles.productPrice}>{item.price}</Text>
-                      <Text style={styles.matchBadge}>{item.matchScore}</Text>
-                    </View>
-                  </View>
-                </View>
+                <ProductCard key={item.id} product={item} />
               ))}
             </ScrollView>
           </View>
@@ -195,18 +175,20 @@ export default function HomeScreen() {
             </Svg>
 
             <View style={styles.bannerContent}>
-              <ThemedText style={styles.bannerTitle}>Women Like You</ThemedText>
-              <Text style={styles.bannerBody}>
+              <ThemedText type="heading3" style={styles.bannerTitle}>Women Like You</ThemedText>
+              <ThemedText type="caption" style={styles.bannerBody}>
                 87 women with a similar fit profile recommend the Curvy Kate Full Coverage T-Shirt Bra.
-              </Text>
+              </ThemedText>
             </View>
           </View>
 
           {/* ── 3. New For You Section ── */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>New For You</Text>
-              <Text style={styles.sectionSubtitle}>Just landed in your size</Text>
+              <ThemedText type="heading4" style={styles.sectionTitle}>New For You</ThemedText>
+              <ThemedText type="caption" themeColor="textSecondary" style={styles.sectionSubtitle}>
+                Just landed in your size
+              </ThemedText>
             </View>
 
             <ScrollView
@@ -215,25 +197,7 @@ export default function HomeScreen() {
               contentContainerStyle={styles.carouselContent}
             >
               {NEW_FOR_YOU_PRODUCTS.map((item) => (
-                <View key={item.id} style={styles.productCard}>
-                  <View style={styles.productImageContainer}>
-                    <Image
-                      source={item.image}
-                      style={styles.productImage}
-                      contentFit="contain"
-                    />
-                  </View>
-                  <View style={styles.productDetails}>
-                    <Text style={styles.productBrand}>{item.brand}</Text>
-                    <Text style={styles.productTitle} numberOfLines={1}>
-                      {item.title}
-                    </Text>
-                    <View style={styles.productPriceRow}>
-                      <Text style={styles.productPrice}>{item.price}</Text>
-                      <Text style={styles.matchBadge}>{item.matchScore}</Text>
-                    </View>
-                  </View>
-                </View>
+                <ProductCard key={item.id} product={item} />
               ))}
             </ScrollView>
           </View>
@@ -241,10 +205,10 @@ export default function HomeScreen() {
           {/* ── 4. Trending Section ── */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Trending</Text>
-              <Text style={styles.sectionSubtitle}>
+              <ThemedText type="heading4" style={styles.sectionTitle}>Trending</ThemedText>
+              <ThemedText type="caption" themeColor="textSecondary" style={styles.sectionSubtitle}>
                 Trending with women who have a similar fit profile.
-              </Text>
+              </ThemedText>
             </View>
 
             <TouchableOpacity style={styles.trendingCard} activeOpacity={0.7}>
@@ -257,23 +221,23 @@ export default function HomeScreen() {
               </View>
 
               <View style={styles.trendingInfo}>
-                <Text style={styles.trendingTitle}>Swimwear styles women</Text>
-                <Text style={styles.trendingSubtitle}>
+                <ThemedText type="heading4" style={styles.trendingTitle}>Swimwear styles women</ThemedText>
+                <ThemedText type="caption" themeColor="textSecondary" style={styles.trendingSubtitle}>
                   High support, flattering fits, and real reviews.
-                </Text>
+                </ThemedText>
 
                 {/* Overlapping Avatars */}
                 <View style={styles.avatarRow}>
                   <View style={[styles.avatarCircle, { backgroundColor: '#5A3D54' }]}>
-                    <Text style={styles.avatarInitial}>S</Text>
+                    <ThemedText style={styles.avatarInitial}>S</ThemedText>
                   </View>
                   <View style={[styles.avatarCircle, { backgroundColor: '#8E4A6F', marginLeft: -8 }]}>
-                    <Text style={styles.avatarInitial}>M</Text>
+                    <ThemedText style={styles.avatarInitial}>M</ThemedText>
                   </View>
                   <View style={[styles.avatarCircle, { backgroundColor: '#B87295', marginLeft: -8 }]}>
-                    <Text style={styles.avatarInitial}>A</Text>
+                    <ThemedText style={styles.avatarInitial}>A</ThemedText>
                   </View>
-                  <Text style={styles.avatarMoreText}>24+</Text>
+                  <ThemedText type="caption" themeColor="textSecondary" style={styles.avatarMoreText}>24+</ThemedText>
                 </View>
               </View>
 
@@ -284,8 +248,10 @@ export default function HomeScreen() {
           {/* ── 5. Updates Section ── */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Updates</Text>
-              <Text style={styles.sectionSubtitle}>Important updates, just for you.</Text>
+              <ThemedText type="heading4" style={styles.sectionTitle}>Updates</ThemedText>
+              <ThemedText type="caption" themeColor="textSecondary" style={styles.sectionSubtitle}>
+                Important updates, just for you.
+              </ThemedText>
             </View>
 
             <View style={styles.updatesList}>
@@ -296,11 +262,15 @@ export default function HomeScreen() {
                   </View>
 
                   <View style={styles.updateTextCol}>
-                    <Text style={styles.updateTitle}>{update.title}</Text>
-                    <Text style={styles.updateSubtitle}>{update.subtitle}</Text>
+                    <ThemedText type="smallBold" style={styles.updateTitle}>{update.title}</ThemedText>
+                    <ThemedText type="caption" themeColor="textSecondary" style={styles.updateSubtitle}>
+                      {update.subtitle}
+                    </ThemedText>
                   </View>
 
-                  <Text style={styles.updateTime}>{update.time}</Text>
+                  <ThemedText type="caption" themeColor="textSecondary" style={styles.updateTime}>
+                    {update.time}
+                  </ThemedText>
                 </View>
               ))}
             </View>
@@ -323,9 +293,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: s(20),
-    paddingTop: vs(8),
-    paddingBottom: vs(12),
+    paddingHorizontal: s(15),
+    paddingTop: vs(4),
+    paddingBottom: vs(8),
   },
   welcomeRow: {
     flexDirection: 'row',
@@ -357,7 +327,7 @@ const styles = StyleSheet.create({
   headerDivider: {
     height: 1,
     backgroundColor: colorPalette.border,
-    marginHorizontal: s(20),
+    marginHorizontal: s(15),
   },
   scrollView: {
     flex: 1,
@@ -371,7 +341,7 @@ const styles = StyleSheet.create({
     gap: vs(10),
   },
   sectionHeader: {
-    paddingHorizontal: s(20),
+    paddingHorizontal: s(15),
     gap: 2,
   },
   sectionTitle: {
@@ -385,63 +355,12 @@ const styles = StyleSheet.create({
     color: colorPalette.secondaryText,
   },
   carouselContent: {
-    paddingHorizontal: s(20),
+    paddingHorizontal: s(15),
     gap: s(14),
   },
-  productCard: {
-    width: s(165),
-    backgroundColor: colorPalette.surface,
-    borderRadius: s(14),
-    borderWidth: 1,
-    borderColor: colorPalette.border,
-    overflow: 'hidden',
-  },
-  productImageContainer: {
-    height: vs(128),
-    backgroundColor: colorPalette.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: s(8),
-  },
-  productImage: {
-    width: '100%',
-    height: '100%',
-  },
-  productDetails: {
-    backgroundColor: '#F9F2F5',
-    padding: s(12),
-    gap: vs(3),
-  },
-  productBrand: {
-    fontFamily: 'Manrope_400Regular',
-    fontSize: 10.5,
-    color: colorPalette.secondaryText,
-  },
-  productTitle: {
-    fontFamily: 'CormorantGaramond_700Bold',
-    fontSize: 14,
-    color: colorPalette.primaryText,
-    marginBottom: vs(4),
-  },
-  productPriceRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  productPrice: {
-    fontFamily: 'Manrope_700Bold',
-    fontSize: 13,
-    color: colorPalette.primaryText,
-  },
-  matchBadge: {
-    fontFamily: 'Manrope_600SemiBold',
-    fontSize: 10.5,
-    color: colorPalette.success,
-  },
-
   // Banner
   bannerWrapper: {
-    marginHorizontal: s(20),
+    marginHorizontal: s(15),
     borderRadius: s(14),
     overflow: 'hidden',
     minHeight: vs(84),
@@ -465,7 +384,7 @@ const styles = StyleSheet.create({
 
   // Trending Card
   trendingCard: {
-    marginHorizontal: s(20),
+    marginHorizontal: s(15),
     backgroundColor: colorPalette.surface,
     borderRadius: s(14),
     borderWidth: 1,
@@ -528,7 +447,7 @@ const styles = StyleSheet.create({
 
   // Updates
   updatesList: {
-    paddingHorizontal: s(20),
+    paddingHorizontal: s(15),
     gap: vs(8),
   },
   updateCard: {

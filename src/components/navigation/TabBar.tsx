@@ -12,7 +12,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { colorPalette } from '@/constants/styles';
 import { s, vs } from '@/utils/size';
-import { BottomTabBarProps } from 'expo-router/build/react-navigation/bottom-tabs';
 
 type TabBarProps = Parameters<NonNullable<React.ComponentProps<typeof Tabs>['tabBar']>>[0];
 
