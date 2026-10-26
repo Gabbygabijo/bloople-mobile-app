@@ -8,9 +8,9 @@ import { s, vs } from '@/utils/size';
 
 const PRICE_OPTIONS = [
   'Under £15',
-  '£15 – £25',
-  '£25 – £40',
-  '£40 – £60',
+  '£15 - £25',
+  '£25 - £40',
+  '£40 - £60',
   '£60+',
   'No preference',
 ];

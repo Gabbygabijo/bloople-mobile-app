@@ -16,6 +16,30 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    npx expo start
    ```
 
+## Bloople local backend
+
+This app connects to the sibling `../backend/` Docker API. Start and seed that local stack first, then create a temporary demo token with `make local-token` from `backend/` and paste it into the app's connection screen. The token remains in memory only and expires after two hours; there is no customer sign-up or production authentication in this local integration.
+
+The default API URL is `http://localhost:8010`. Override it with `EXPO_PUBLIC_API_URL` when the app runs on another device or emulator; `localhost` on a physical phone means the phone itself, so use the development computer's reachable LAN address. The same value is shown on the connection screen. API paths and payloads are defined in `../backend/openapi.yaml`.
+
+After connecting, an existing Fit-DNA profile opens on Home. Choose **Edit Fit-DNA** to update it; a new profile begins the onboarding flow. Save writes the entire answer payload and schedules the backend's asynchronous match recomputation.
+
+## Linux Android emulator
+
+The shared computer setup and reusable commands are documented in
+[`../docs/mobile-development/README.md`](../docs/mobile-development/README.md).
+Use the already-installed Node 24 (`nvm use 24`) for Expo SDK 57; the older default
+Node 18 cannot run this SDK reliably. `npm install` now produces a versioned npm
+lockfile for repeatable dependency installation.
+
+Boot `rn-api36` with `mobile-emulator start`, reverse API port 8010 and Metro port
+8081 for `emulator-5554`, then run `npx expo start --go --localhost --android`.
+With those ADB mappings, the existing `http://localhost:8010` API default reaches
+the host backend. Reapply mappings after emulator shutdown. This workflow serves
+JavaScript through SDK-matched Expo Go and does not compile a native Android app.
+Native modules unsupported by Expo Go require a separately authorized development
+build. Other repositories can reuse the same SDK/AVD with their own dependencies.
+
 In the output, you'll find options to open the app in a
 
 - [development build](https://docs.expo.dev/develop/development-builds/introduction/)
