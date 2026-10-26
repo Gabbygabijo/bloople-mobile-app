@@ -14,12 +14,16 @@ import Svg, { Defs, Rect, Stop, LinearGradient as SvgLinearGradient } from 'reac
 
 import ActionButton from '@/components/buttons/ActionButton';
 import { BustFullnessStep } from '@/components/onboarding/BustFullnessStep';
+import { CommunityUsernameStep } from '@/components/onboarding/CommunityUsernameStep';
 import { MeasurementsStep } from '@/components/onboarding/MeasurementsStep';
+import { PaddingPreferenceStep } from '@/components/onboarding/PaddingPreferenceStep';
+import { PreferredCoverageStep } from '@/components/onboarding/PreferredCoverageStep';
+import { PreferredSupportStep } from '@/components/onboarding/PreferredSupportStep';
 import { ThemedText } from '@/components/themed-text';
 import { DynamicBottomSheet } from '@/components/ui/dynamic-bottom-sheet';
 import { colorPalette, Containers } from '@/constants/styles';
 import { s } from '@/utils/size';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import DoubbleArrowDown from '../../assets/svgs/DoubbleArrowDown';
 import { ThemedView } from '../themed-view';
 
@@ -34,8 +38,22 @@ export function MeetFitDnaStep({
   onContinue,
   onBack,
 }: MeetFitDnaStepProps) {
-  const [subStep, setSubStep] = useState<'main' | 'fullness' | 'measurements'>('main');
+  const scrollViewRef = useRef<ScrollView>(null);
+  const [learnedSectionY, setLearnedSectionY] = useState(0);
+
+  const handleScrollDown = () => {
+    if (learnedSectionY > 0) {
+      scrollViewRef.current?.scrollTo({ y: learnedSectionY, animated: true });
+    } else {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }
+  };
+
+  const [subStep, setSubStep] = useState<
+    'main' | 'fullness' | 'measurements' | 'coverage' | 'support' | 'padding' | 'username'
+  >('main');
   const [showImproveModal, setShowImproveModal] = useState(false);
+  const [showCommunityModal, setShowCommunityModal] = useState(false);
   const [fitDnaData, setFitDnaData] = useState<Record<string, any>>(onboardingData);
 
   const isGlassSupported =
@@ -61,11 +79,67 @@ export function MeetFitDnaStep({
         initialUnderbust={fitDnaData.underbust}
         initialOverbust={fitDnaData.overbust}
         onContinue={(data) => {
+          setFitDnaData((prev) => ({ ...prev, ...data }));
+          setSubStep('coverage');
+        }}
+        onBack={() => setSubStep('fullness')}
+      />
+    );
+  }
+
+  if (subStep === 'coverage') {
+    return (
+      <PreferredCoverageStep
+        initialSelection={fitDnaData.preferredCoverage}
+        onContinue={(data) => {
+          setFitDnaData((prev) => ({ ...prev, ...data }));
+          setSubStep('support');
+        }}
+        onBack={() => setSubStep('measurements')}
+      />
+    );
+  }
+
+  if (subStep === 'support') {
+    return (
+      <PreferredSupportStep
+        initialSelection={fitDnaData.preferredSupport}
+        onContinue={(data) => {
+          setFitDnaData((prev) => ({ ...prev, ...data }));
+          setSubStep('padding');
+        }}
+        onBack={() => setSubStep('coverage')}
+      />
+    );
+  }
+
+  if (subStep === 'padding') {
+    return (
+      <PaddingPreferenceStep
+        initialSelection={fitDnaData.paddingPreference}
+        onContinue={(data) => {
+          setFitDnaData((prev) => ({ ...prev, ...data }));
+          setSubStep('main');
+          setShowCommunityModal(true);
+        }}
+        onBack={() => setSubStep('support')}
+      />
+    );
+  }
+
+  if (subStep === 'username') {
+    return (
+      <CommunityUsernameStep
+        initialUsername={fitDnaData.communityUsername}
+        onContinue={(data) => {
           const finalData = { ...fitDnaData, ...data };
           setFitDnaData(finalData);
           onContinue(finalData);
         }}
-        onBack={() => setSubStep('fullness')}
+        onBack={() => {
+          setSubStep('main');
+          setShowCommunityModal(true);
+        }}
       />
     );
   }
@@ -92,6 +166,7 @@ export function MeetFitDnaStep({
     <ThemedView style={styles.root}>
       <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
         <ScrollView
+          ref={scrollViewRef}
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
@@ -188,17 +263,24 @@ export function MeetFitDnaStep({
           </View>
 
           {/* ── Scroll Prompt ── */}
-          <View style={styles.scrollPromptSection}>
+          <TouchableOpacity
+            style={styles.scrollPromptSection}
+            onPress={handleScrollDown}
+            activeOpacity={0.7}
+          >
             <Text style={styles.scrollPromptText}>Scroll to explore your result</Text>
             <View style={styles.arrowContainer}>
               <ThemedView style={styles.arrowIndicator} />
               <DoubbleArrowDown />
               <ThemedView style={styles.arrowIndicator} />
             </View>
-          </View>
+          </TouchableOpacity>
 
           {/* ── Section: What we've learned about your fit ── */}
-          <View style={styles.learnedSection}>
+          <View
+            style={styles.learnedSection}
+            onLayout={(e) => setLearnedSectionY(e.nativeEvent.layout.y)}
+          >
             <Text style={styles.sectionHeading}>What we’ve learned about your fit</Text>
             <Text style={styles.sectionSubtitle}>
               Your unique preferences, challenges and styles, all in one place.
@@ -367,6 +449,40 @@ export function MeetFitDnaStep({
           text: "I'll do this later",
           onPress: () => {
             setShowImproveModal(false);
+            setShowCommunityModal(true);
+          },
+          bgColor: 'transparent',
+          textColor: colorPalette.primary,
+          borderColor: 'transparent',
+          borderWidth: 0,
+        }}
+      />
+
+      {/* ── Join the Community Bottom Sheet Modal ── */}
+      <DynamicBottomSheet
+        visible={showCommunityModal}
+        setVisible={setShowCommunityModal}
+        backgroundStyle={{ backgroundColor: colorPalette.background }}
+        icon={
+          <Image
+            source={require('@/assets/images/arrow.png')}
+            style={styles.modalIcon}
+            contentFit="contain"
+          />
+        }
+        title="Join the Community"
+        description="Ask questions. Share your experience. Find women who get it."
+        primaryButton={{
+          text: 'Join Community',
+          onPress: () => {
+            setShowCommunityModal(false);
+            setSubStep('username');
+          },
+        }}
+        secondaryButton={{
+          text: "I'll do this later",
+          onPress: () => {
+            setShowCommunityModal(false);
             onContinue(fitDnaData);
           },
           bgColor: 'transparent',

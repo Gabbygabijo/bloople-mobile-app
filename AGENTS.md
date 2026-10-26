@@ -21,7 +21,11 @@ npx expo-doctor             # diagnose dependency and config issues
 npx expo install --fix      # fix incompatible package versions
 ```
 
-Run lint and typecheck before declaring any task done.
+## Execution & Quality Checks
+
+- **No Automated Background Checks or Tasks**: Never run background checks, lint checks (`expo lint`), typechecks (`tsc`), or background tasks automatically.
+- **User Notification**: If you believe a lint check, typecheck, or test is warranted, simply inform the user with the command they can run themselves.
+- **Direct Focus**: Focus strictly on completing the immediate coding task requested by the user without launching asynchronous verification tasks.
 
 ## Navigation & Routing
 
