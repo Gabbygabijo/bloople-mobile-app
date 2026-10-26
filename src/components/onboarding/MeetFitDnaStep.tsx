@@ -23,7 +23,7 @@ import { ThemedText } from '@/components/themed-text';
 import { DynamicBottomSheet } from '@/components/ui/dynamic-bottom-sheet';
 import { colorPalette, Containers } from '@/constants/styles';
 import { s } from '@/utils/size';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import DoubbleArrowDown from '../../assets/svgs/DoubbleArrowDown';
 import { ThemedView } from '../themed-view';
 
@@ -38,6 +38,17 @@ export function MeetFitDnaStep({
   onContinue,
   onBack,
 }: MeetFitDnaStepProps) {
+  const scrollViewRef = useRef<ScrollView>(null);
+  const [learnedSectionY, setLearnedSectionY] = useState(0);
+
+  const handleScrollDown = () => {
+    if (learnedSectionY > 0) {
+      scrollViewRef.current?.scrollTo({ y: learnedSectionY, animated: true });
+    } else {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }
+  };
+
   const [subStep, setSubStep] = useState<
     'main' | 'fullness' | 'measurements' | 'coverage' | 'support' | 'padding' | 'username'
   >('main');
@@ -155,6 +166,7 @@ export function MeetFitDnaStep({
     <ThemedView style={styles.root}>
       <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
         <ScrollView
+          ref={scrollViewRef}
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
@@ -251,17 +263,24 @@ export function MeetFitDnaStep({
           </View>
 
           {/* ── Scroll Prompt ── */}
-          <View style={styles.scrollPromptSection}>
+          <TouchableOpacity
+            style={styles.scrollPromptSection}
+            onPress={handleScrollDown}
+            activeOpacity={0.7}
+          >
             <Text style={styles.scrollPromptText}>Scroll to explore your result</Text>
             <View style={styles.arrowContainer}>
               <ThemedView style={styles.arrowIndicator} />
               <DoubbleArrowDown />
               <ThemedView style={styles.arrowIndicator} />
             </View>
-          </View>
+          </TouchableOpacity>
 
           {/* ── Section: What we've learned about your fit ── */}
-          <View style={styles.learnedSection}>
+          <View
+            style={styles.learnedSection}
+            onLayout={(e) => setLearnedSectionY(e.nativeEvent.layout.y)}
+          >
             <Text style={styles.sectionHeading}>What we’ve learned about your fit</Text>
             <Text style={styles.sectionSubtitle}>
               Your unique preferences, challenges and styles, all in one place.
