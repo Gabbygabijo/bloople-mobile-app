@@ -12,7 +12,7 @@ export default function Index() {
   // if (profile && profile.version > 0) return null;
 
   // Temporary toggle: set to true to test dashboard, false to test welcome/onboarding
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
   if (isLogin) {
     return <Redirect href="/(tabs)" />;
   }
