@@ -1,53 +1,61 @@
-import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import React from 'react';
 import {
   Platform,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SvgProps } from 'react-native-svg';
 
 import { colorPalette } from '@/constants/styles';
 import { s, vs } from '@/utils/size';
+import ActiveHomeIcon from '../../assets/svgs/tab-icons/ActiveHomeIcon';
+import ActiveProfileIcon from '../../assets/svgs/tab-icons/ActiveProfileIcon';
+import ActiveSavedIcon from '../../assets/svgs/tab-icons/ActiveSavedIcon';
+import ActiveSearchIcon from '../../assets/svgs/tab-icons/ActiveSearchIcon';
+import ComminityIcon from '../../assets/svgs/tab-icons/ComminityIcon';
+import HomeIcon from '../../assets/svgs/tab-icons/HomeIcon';
+import ProfileIcon from '../../assets/svgs/tab-icons/ProfileIcon';
+import SavedIcon from '../../assets/svgs/tab-icons/SavedIcon';
+import SearchIcon from '../../assets/svgs/tab-icons/SearchIcon';
 
 type TabBarProps = Parameters<NonNullable<React.ComponentProps<typeof Tabs>['tabBar']>>[0];
 
 interface TabItemConfig {
   label: string;
-  icon: keyof typeof Ionicons.glyphMap;
-  activeIcon: keyof typeof Ionicons.glyphMap;
+  Icon: React.ComponentType<SvgProps>;
+  ActiveIcon: React.ComponentType<SvgProps>;
   isCenter?: boolean;
 }
 
 const TAB_CONFIG: Record<string, TabItemConfig> = {
   index: {
     label: 'Home',
-    icon: 'home-outline',
-    activeIcon: 'home',
+    Icon: HomeIcon,
+    ActiveIcon: ActiveHomeIcon,
   },
   discover: {
     label: 'Discover',
-    icon: 'search-outline',
-    activeIcon: 'search',
+    Icon: SearchIcon,
+    ActiveIcon: ActiveSearchIcon,
   },
   community: {
     label: 'Community',
-    icon: 'people-outline',
-    activeIcon: 'people',
+    Icon: ComminityIcon,
+    ActiveIcon: ComminityIcon,
     isCenter: true,
   },
   saved: {
     label: 'Saved',
-    icon: 'bookmark-outline',
-    activeIcon: 'bookmark',
+    Icon: SavedIcon,
+    ActiveIcon: ActiveSavedIcon,
   },
   profile: {
     label: 'Profile',
-    icon: 'person-outline',
-    activeIcon: 'person',
+    Icon: ProfileIcon,
+    ActiveIcon: ActiveProfileIcon,
   },
 };
 
@@ -69,8 +77,8 @@ export function TabBar({
         const isFocused = state.index === index;
         const config = TAB_CONFIG[route.name] || {
           label: options.title || route.name,
-          icon: 'ellipse-outline',
-          activeIcon: 'ellipse',
+          Icon: HomeIcon,
+          ActiveIcon: ActiveHomeIcon,
         };
 
         const onPress = () => {
@@ -92,8 +100,9 @@ export function TabBar({
           });
         };
 
-        // ── Elevated Center Action Tab ──
+        // ── Elevated Center Action Tab (Community) ──
         if (config.isCenter) {
+          const CenterIcon = isFocused ? config.ActiveIcon : config.Icon;
           return (
             <View key={route.key} style={styles.centerTabWrapper}>
               <TouchableOpacity
@@ -108,18 +117,13 @@ export function TabBar({
                   isFocused && styles.centerButtonActive,
                 ]}
               >
-                <Ionicons
-                  name={isFocused ? config.activeIcon : config.icon}
-                  size={s(26)}
-                  color={colorPalette.primary}
-                />
+                <CenterIcon width={s(32)} height={s(32)} />
               </TouchableOpacity>
             </View>
           );
         }
 
-        const activeColor = colorPalette.primary;
-        const inactiveColor = colorPalette.secondaryText;
+        const TabIcon = isFocused ? config.ActiveIcon : config.Icon;
 
         return (
           <TouchableOpacity
@@ -132,20 +136,7 @@ export function TabBar({
             activeOpacity={0.7}
             style={styles.tabItem}
           >
-            <Ionicons
-              name={isFocused ? config.activeIcon : config.icon}
-              size={s(22)}
-              color={isFocused ? activeColor : inactiveColor}
-            />
-            <Text
-              style={[
-                styles.tabLabel,
-                { color: isFocused ? activeColor : inactiveColor },
-                isFocused && styles.tabLabelActive,
-              ]}
-            >
-              {config.label}
-            </Text>
+            <TabIcon width={s(24)} height={s(24)} />
           </TouchableOpacity>
         );
       })}
@@ -162,21 +153,13 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: colorPalette.border,
     paddingTop: vs(8),
-    height: Platform.OS === 'ios' ? vs(84) : vs(68),
+    minHeight: Platform.OS === 'ios' ? vs(76) : vs(62),
   },
   tabItem: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 4,
-  },
-  tabLabel: {
-    fontFamily: 'Manrope_500Medium',
-    fontSize: 11,
-    lineHeight: 14,
-  },
-  tabLabelActive: {
-    fontFamily: 'Manrope_700Bold',
+    paddingVertical: vs(8),
   },
   centerTabWrapper: {
     flex: 1,
@@ -184,21 +167,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   centerButton: {
-    width: s(54),
-    height: s(54),
-    borderRadius: s(27),
+    width: s(60),
+    height: s(60),
+    borderRadius: s(30),
     backgroundColor: colorPalette.surface,
-    borderWidth: 1.5,
-    borderColor: colorPalette.border,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: vs(-22),
+    marginTop: vs(-24),
     ...Platform.select({
       ios: {
-        shadowColor: colorPalette.primary,
+        shadowColor: '#000000',
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.12,
-        shadowRadius: 8,
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
       },
       android: {
         elevation: 6,
@@ -206,8 +187,19 @@ const styles = StyleSheet.create({
     }),
   },
   centerButtonActive: {
-    backgroundColor: '#FAF2F5',
-    borderColor: colorPalette.primary,
+    backgroundColor: '#DEC7D3',
+    ...Platform.select({
+      ios: {
+        shadowColor: colorPalette.primary,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.18,
+        shadowRadius: 10,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
   },
 });
+
 export default TabBar;
