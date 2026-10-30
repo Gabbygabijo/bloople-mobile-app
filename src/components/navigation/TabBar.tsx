@@ -51,8 +51,15 @@ const TAB_CONFIG: Record<string, TabItemConfig> = {
   },
 };
 
-export function TabBar({ state, descriptors, navigation }: TabBarProps) {
-  const insets = useSafeAreaInsets();
+export function TabBar({
+  state,
+  descriptors,
+  emitter,
+  navigateToTab,
+  insets: propInsets,
+}: TabBarProps) {
+  const contextInsets = useSafeAreaInsets();
+  const insets = propInsets ?? contextInsets;
   const bottomPadding = Math.max(insets.bottom, 8);
 
   return (
@@ -67,19 +74,19 @@ export function TabBar({ state, descriptors, navigation }: TabBarProps) {
         };
 
         const onPress = () => {
-          const event = navigation.emit({
+          const event = emitter.emit({
             type: 'tabPress',
             target: route.key,
             canPreventDefault: true,
           });
 
           if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name);
+            navigateToTab(route.key);
           }
         };
 
         const onLongPress = () => {
-          navigation.emit({
+          emitter.emit({
             type: 'tabLongPress',
             target: route.key,
           });

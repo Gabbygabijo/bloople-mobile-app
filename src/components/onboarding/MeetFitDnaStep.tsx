@@ -23,7 +23,7 @@ import { ThemedText } from '@/components/themed-text';
 import { DynamicBottomSheet } from '@/components/ui/dynamic-bottom-sheet';
 import { colorPalette, Containers } from '@/constants/styles';
 import { s } from '@/utils/size';
-import { useRef, useState } from 'react';
+import { ElementRef, useRef, useState } from 'react';
 import DoubbleArrowDown from '../../assets/svgs/DoubbleArrowDown';
 import { ThemedView } from '../themed-view';
 
@@ -38,7 +38,7 @@ export function MeetFitDnaStep({
   onContinue,
   onBack,
 }: MeetFitDnaStepProps) {
-  const scrollViewRef = useRef<ScrollView>(null);
+  const scrollViewRef = useRef<ElementRef<typeof ScrollView>>(null);
   const [learnedSectionY, setLearnedSectionY] = useState(0);
 
   const handleScrollDown = () => {
