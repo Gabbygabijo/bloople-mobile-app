@@ -1,42 +1,22 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet } from 'react-native';
 
-import { ThemedText } from '@/components/themed-text';
+import PlainLayout from '@/components/layouts/PlainLayout';
 import { ThemedView } from '@/components/themed-view';
-import { colorPalette } from '@/constants/styles';
 
 export default function DiscoverScreen() {
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedText type="heading2" style={styles.title}>
-          Discover
-        </ThemedText>
-        <Text style={styles.subtitle}>
-          Browse bras and styles tailored to your Fit-DNA.
-        </Text>
-      </SafeAreaView>
-    </ThemedView>
+    <PlainLayout 
+    title='Discover' 
+    subTitle='Browse bras and styles tailored to your Fit-DNA.'>
+      <ThemedView style={styles.container}>
+        
+      </ThemedView>
+    </PlainLayout>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FAF8F5',
-  },
-  safeArea: {
-    flex: 1,
-    padding: 24,
-  },
-  title: {
-    color: colorPalette.primaryText,
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontFamily: 'Manrope_400Regular',
-    fontSize: 14,
-    color: colorPalette.secondaryText,
   },
 });
