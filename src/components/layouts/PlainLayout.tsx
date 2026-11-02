@@ -1,7 +1,7 @@
 import { colorPalette, Containers } from '@/constants/styles'
-import { s } from '@/utils/size'
+import { s, vs } from '@/utils/size'
 import { ScrollView, StyleSheet, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { NativeSafeAreaViewProps, SafeAreaView } from 'react-native-safe-area-context'
 import { ThemedText } from '../themed-text'
 import { ThemedView } from '../themed-view'
 
@@ -9,20 +9,21 @@ interface PlainLayoutProp {
   children: React.ReactNode;
   title: string;
   subTitle?: string
+  safeAreaEdges?: NativeSafeAreaViewProps['edges']
 }
-const PlainLayout = ({ children, title, subTitle }: PlainLayoutProp) => {
+const PlainLayout = ({ children, title, subTitle, safeAreaEdges = ['left', 'right', 'top'] }: PlainLayoutProp) => {
   return (
     <ThemedView
       style={styles.root}
     >
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1 }} edges={safeAreaEdges} >
         <ScrollView
           style={styles.scrollView}
           showsVerticalScrollIndicator={false}
           stickyHeaderHiddenOnScroll
           stickyHeaderIndices={[0]}
         >
-          <View style={Containers.defaultContainer}>
+          <ThemedView style={Containers.defaultContainer}>
             <View style={styles.topContainer}>
               <ThemedText type='defaultSemiBold'>{title}</ThemedText>
               {subTitle && <ThemedText
@@ -30,7 +31,7 @@ const PlainLayout = ({ children, title, subTitle }: PlainLayoutProp) => {
                 style={styles.subTitle}
               >{subTitle}</ThemedText>}
             </View>
-          </View>
+          </ThemedView>
           {children}
         </ScrollView>
       </SafeAreaView>
@@ -48,7 +49,8 @@ const styles = StyleSheet.create({
     flex: 1
   },
   topContainer: {
-    gap: s(4)
+    gap: s(4),
+    paddingVertical: vs(8)
   },
   subTitle: {
     color: colorPalette.secondaryText
