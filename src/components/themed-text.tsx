@@ -4,7 +4,7 @@ import { Fonts, ThemeColor } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 export type ThemedTextProps = TextProps & {
-  type?: 'default' | 'title' | 'small' | 'smallBold' | 'subtitle' | 'link' | 'linkPrimary' | 'code' | 'heading1' | 'heading2' | 'heading3' | 'heading4' | 'bodyText2' | 'bodyText1' | 'suportingBodyText4' | 'caption';
+  type?: 'default' | 'defaultSemiBold' | 'title' | 'small' | 'smallBold' | 'subtitle' | 'link' | 'linkPrimary' | 'code' | 'heading1' | 'heading2' | 'heading3' | 'heading4' | 'bodyText2' | 'bodyText1' | 'suportingBodyText4' | 'caption';
   themeColor?: ThemeColor;
 };
 
@@ -16,6 +16,7 @@ export function ThemedText({ style, type = 'default', themeColor, ...rest }: The
       style={[
         { color: theme[themeColor ?? 'text'] },
         type === 'default' && styles.default,
+        type === 'defaultSemiBold' && styles.defaultSemiBold,
         type === 'title' && styles.title,
         type === 'small' && styles.small,
         type === 'smallBold' && styles.smallBold,
@@ -51,6 +52,11 @@ const styles = StyleSheet.create({
   },
   default: {
     fontFamily: 'Manrope_400Regular',
+    fontSize: 16,
+    lineHeight: 24,
+  },
+  defaultSemiBold: {
+    fontFamily: 'Manrope_600SemiBold',
     fontSize: 16,
     lineHeight: 24,
   },
