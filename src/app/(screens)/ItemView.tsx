@@ -150,7 +150,7 @@ const ItemView = () => {
             <TouchableOpacity
               style={styles.shopButton}
               activeOpacity={0.85}
-              onPress={() => {}}
+              onPress={() => { }}
             >
               <Text style={styles.shopButtonText}>Shop at Curvy Kate</Text>
             </TouchableOpacity>
@@ -353,130 +353,126 @@ const ItemView = () => {
         </ThemedView>
       </DynamicViewLayout>
 
-      {/* ── 8. Bottom Sheet Modals (More Actions Flow) ── */}
-      {/* ── Sheet 1: More Actions ── */}
+      {/* ── 8. Bottom Sheet Modal (Consolidated More Actions Flow) ── */}
       <DynamicBottomSheet
-        visible={activeSheet === 'more'}
+        visible={activeSheet !== null}
         onClose={handleCloseSheet}
+        scrollable={activeSheet === 'feedback'}
+        snapPoints={activeSheet === 'feedback' ? ['82%'] : undefined}
+        enableDynamicSizing={activeSheet !== 'feedback'}
         showHandle
+        icon={
+          activeSheet === 'success' && <Image
+            source={require('@/assets/images/arrow.png')}
+            style={{ width: s(80), height: s(80), }}
+            contentFit="contain"
+          />
+        }
+        title={
+          activeSheet === 'feedback' ? 'What didn’t work?' : activeSheet === 'success' ? 'Thanks for the feedback!' : null
+        }
       >
-        <View style={styles.sheetContent}>
-          <Text style={styles.sheetHeaderLabel}>More Actions</Text>
+        {activeSheet === 'more' && (
+          <View style={styles.sheetContent}>
+            <Text style={styles.sheetHeaderLabel}>More Actions</Text>
 
-          <TouchableOpacity style={styles.actionOptionBtn} activeOpacity={0.7} onPress={handleCloseSheet}>
-            <Text style={styles.actionOptionText}>Move to Want</Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.actionOptionBtn} activeOpacity={0.7} onPress={handleCloseSheet}>
+              <Text style={styles.actionOptionText}>Move to Want</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity style={styles.actionOptionBtn} activeOpacity={0.7} onPress={handleCloseSheet}>
-            <Text style={styles.actionOptionText}>Move to Own</Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.actionOptionBtn} activeOpacity={0.7} onPress={handleCloseSheet}>
+              <Text style={styles.actionOptionText}>Move to Own</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity style={styles.actionOptionBtn} activeOpacity={0.7} onPress={handleCloseSheet}>
-            <Text style={styles.actionOptionText}>Move to Love</Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.actionOptionBtn} activeOpacity={0.7} onPress={handleCloseSheet}>
+              <Text style={styles.actionOptionText}>Move to Love</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.actionOptionBtn}
-            activeOpacity={0.7}
-            onPress={() => setActiveSheet('feedback')}
-          >
-            <Text style={styles.actionOptionText}>Didn't work</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.actionOptionBtn}
+              activeOpacity={0.7}
+              onPress={() => setActiveSheet('feedback')}
+            >
+              <Text style={styles.actionOptionText}>Didn't work</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.solidPlumBtn}
-            activeOpacity={0.85}
-            onPress={handleCloseSheet}
-          >
-            <Text style={styles.solidPlumBtnText}>Close</Text>
-          </TouchableOpacity>
-        </View>
-      </DynamicBottomSheet>
+            <TouchableOpacity
+              style={styles.solidPlumBtn}
+              activeOpacity={0.85}
+              onPress={handleCloseSheet}
+            >
+              <Text style={styles.solidPlumBtnText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
-      {/* ── Sheet 2: What didn't work? ── */}
-      <DynamicBottomSheet
-        visible={activeSheet === 'feedback'}
-        onClose={handleCloseSheet}
-        scrollable
-        snapPoints={['80%']}
-        showHandle
-      >
-        <View style={styles.sheetContent}>
-          <Text style={styles.feedbackTitle}>What didn't work?</Text>
-          <Text style={styles.feedbackSubtitle}>
-            Tell us what went wrong so we can make better recommendations for you.
-          </Text>
+        {activeSheet === 'feedback' && (
+          <View style={styles.sheetContent}>
+            <Text style={styles.feedbackSubtitle}>
+              Tell us what went wrong so we can make better recommendations for you.
+            </Text>
 
-          <Text style={styles.selectLabel}>Select all that apply.</Text>
+            <Text style={styles.selectLabel}>Select all that apply.</Text>
 
-          <View style={styles.reasonsList}>
-            {REASONS_LIST.map((reason) => {
-              const isSelected = selectedReasons.includes(reason);
-              return (
-                <TouchableOpacity
-                  key={reason}
-                  style={[
-                    styles.reasonCard,
-                    isSelected && styles.reasonCardSelected,
-                  ]}
-                  activeOpacity={0.75}
-                  onPress={() => toggleReason(reason)}
-                >
-                  <Text
+            <View style={styles.reasonsList}>
+              {REASONS_LIST.map((reason) => {
+                const isSelected = selectedReasons.includes(reason);
+                return (
+                  <TouchableOpacity
+                    key={reason}
                     style={[
-                      styles.reasonText,
-                      isSelected && styles.reasonTextSelected,
+                      styles.reasonCard,
+                      isSelected && styles.reasonCardSelected,
                     ]}
+                    activeOpacity={0.75}
+                    onPress={() => toggleReason(reason)}
                   >
-                    {reason}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
+                    <Text
+                      style={[
+                        styles.reasonText,
+                        isSelected && styles.reasonTextSelected,
+                      ]}
+                    >
+                      {reason}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+
+            <TouchableOpacity
+              style={styles.solidPlumBtn}
+              activeOpacity={0.85}
+              onPress={() => setActiveSheet('success')}
+            >
+              <Text style={styles.solidPlumBtnText}>Submit Feedback</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.cancelLink}
+              activeOpacity={0.7}
+              onPress={handleCloseSheet}
+            >
+              <Text style={styles.cancelLinkText}>Cancel</Text>
+            </TouchableOpacity>
           </View>
+        )}
 
-          <TouchableOpacity
-            style={styles.solidPlumBtn}
-            activeOpacity={0.85}
-            onPress={() => setActiveSheet('success')}
-          >
-            <Text style={styles.solidPlumBtnText}>Submit Feedback</Text>
-          </TouchableOpacity>
+        {activeSheet === 'success' && (
+          <View style={[styles.sheetContent, { alignItems: 'center', paddingVertical: vs(12) }]}>
+            <Text style={[styles.feedbackSubtitle, { marginBottom: vs(24) }]}>
+              We'll use this to improve your recommendations
+            </Text>
 
-          <TouchableOpacity
-            style={styles.cancelLink}
-            activeOpacity={0.7}
-            onPress={handleCloseSheet}
-          >
-            <Text style={styles.cancelLinkText}>Cancel</Text>
-          </TouchableOpacity>
-        </View>
-      </DynamicBottomSheet>
-
-      {/* ── Sheet 3: Thanks for the feedback! ── */}
-      <DynamicBottomSheet
-        visible={activeSheet === 'success'}
-        onClose={handleCloseSheet}
-        showHandle
-      >
-        <View style={[styles.sheetContent, { alignItems: 'center', paddingVertical: vs(12) }]}>
-          <View style={styles.successIconBadge}>
-            <Ionicons name="sparkles" size={26} color="#A85F7D" />
+            <TouchableOpacity
+              style={[styles.solidPlumBtn, { width: '100%' }]}
+              activeOpacity={0.85}
+              onPress={handleCloseSheet}
+            >
+              <Text style={styles.solidPlumBtnText}>Done</Text>
+            </TouchableOpacity>
           </View>
-
-          <Text style={styles.feedbackTitle}>Thanks for the feedback!</Text>
-          <Text style={[styles.feedbackSubtitle, { marginBottom: vs(24) }]}>
-            We'll use this to improve your recommendations
-          </Text>
-
-          <TouchableOpacity
-            style={[styles.solidPlumBtn, { width: '100%' }]}
-            activeOpacity={0.85}
-            onPress={handleCloseSheet}
-          >
-            <Text style={styles.solidPlumBtnText}>Done</Text>
-          </TouchableOpacity>
-        </View>
+        )}
       </DynamicBottomSheet>
     </>
   );
@@ -900,12 +896,6 @@ const styles = StyleSheet.create({
   },
 
   // ── Feedback Sheet ──
-  feedbackTitle: {
-    fontFamily: 'CormorantGaramond_700Bold',
-    fontSize: s(22),
-    color: colorPalette.primaryText,
-    textAlign: 'center',
-  },
   feedbackSubtitle: {
     fontFamily: 'Manrope_400Regular',
     fontSize: 12,
@@ -959,14 +949,4 @@ const styles = StyleSheet.create({
     color: colorPalette.secondaryText,
   },
 
-  // ── Success Sheet ──
-  successIconBadge: {
-    width: s(60),
-    height: s(60),
-    borderRadius: s(30),
-    backgroundColor: '#FAF2F5',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: vs(12),
-  },
 });
