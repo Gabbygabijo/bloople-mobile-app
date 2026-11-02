@@ -156,7 +156,16 @@ export default function HomeScreen() {
               contentContainerStyle={styles.carouselContent}
             >
               {FOR_YOU_PRODUCTS.map((item) => (
-                <ProductCard key={item.id} product={item} />
+                <ProductCard
+                  key={item.id}
+                  product={item}
+                  onPress={() => router.push({
+                    pathname: '/ItemView',
+                    params: {
+                      id: item.id
+                    }
+                  })}
+                />
               ))}
             </ScrollView>
           </View>
