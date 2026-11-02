@@ -24,9 +24,17 @@ export interface ProductCardProps {
   product: ProductItem;
   onPress?: () => void;
   style?: StyleProp<ViewStyle>;
+  topRightBadge?: React.ReactNode;
+  footerNode?: React.ReactNode;
 }
 
-export function ProductCard({ product, onPress, style }: ProductCardProps) {
+export function ProductCard({
+  product,
+  onPress,
+  style,
+  topRightBadge,
+  footerNode,
+}: ProductCardProps) {
   const Container = onPress ? TouchableOpacity : View;
 
   return (
@@ -41,6 +49,11 @@ export function ProductCard({ product, onPress, style }: ProductCardProps) {
           style={styles.image}
           contentFit="contain"
         />
+        {topRightBadge && (
+          <View style={styles.topRightBadge}>
+            {topRightBadge}
+          </View>
+        )}
       </View>
 
       <View style={styles.details}>
@@ -54,6 +67,7 @@ export function ProductCard({ product, onPress, style }: ProductCardProps) {
           <ThemedText style={styles.price}>{product.price}</ThemedText>
           <ThemedText style={styles.matchBadge}>{product.matchScore}</ThemedText>
         </View>
+        {footerNode}
       </View>
     </Container>
   );
@@ -75,6 +89,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: s(8),
+    position: 'relative',
+  },
+  topRightBadge: {
+    position: 'absolute',
+    top: s(8),
+    right: s(8),
+    zIndex: 2,
   },
   image: {
     width: '100%',
