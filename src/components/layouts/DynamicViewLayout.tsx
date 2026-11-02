@@ -12,15 +12,23 @@ interface DynamicViewLayoutProp {
   children?: React.ReactNode;
   title?: string;
   backHandler?: () => void;
-  rightHandler?: React.JSX.Element
+  rightHandler?: React.JSX.Element;
+  footer?: React.ReactNode;
 }
 
-const DynamicViewLayout: React.FC<DynamicViewLayoutProp> = ({ backHandler, children, title, rightHandler }) => {
+const DynamicViewLayout: React.FC<DynamicViewLayoutProp> = ({
+  backHandler,
+  children,
+  title,
+  rightHandler,
+  footer,
+}) => {
   return (
     <ThemedView style={styles.root}>
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView
           style={styles.scrollView}
+          contentContainerStyle={{ paddingBottom: footer ? 24 : 40 }}
           showsVerticalScrollIndicator={false}
           stickyHeaderHiddenOnScroll
           stickyHeaderIndices={[0]}
@@ -49,6 +57,7 @@ const DynamicViewLayout: React.FC<DynamicViewLayoutProp> = ({ backHandler, child
             {children}
           </ThemedView>
         </ScrollView>
+        {footer}
       </SafeAreaView>
     </ThemedView>
   )
