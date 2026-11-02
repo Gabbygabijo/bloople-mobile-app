@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 
 export const colorPalette = {
   primary: '#6D3B5E',
@@ -29,3 +29,8 @@ export const Containers = StyleSheet.create({
     elevation: 3,
   },
 })
+
+
+export const isGlassSupported =
+  (Platform.OS === 'ios' || Platform.OS === 'macos') &&
+  parseInt(String(Platform.Version), 10) >= 26;
